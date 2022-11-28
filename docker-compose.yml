@@ -3,7 +3,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: .docker/Dockerfile
+      dockerfile: Dockerfile
     image: mcv-framework
     ports:
       - 80:80
