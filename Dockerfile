@@ -1,8 +1,6 @@
-# This Docker files uses the technique of building containers FROM previous containers.
-
 # =================================================================
-# Build from PHP 7.4.7 Released on June 11, 2020.
-FROM php:7.4.7-apache as base
+# Build PHP:8-Apache Base Image. Ref: https://hub.docker.com/_/php
+FROM php:8-apache as base
 
 # Apply maintainer label
 LABEL maintainer="Richard Soares"
@@ -57,20 +55,22 @@ RUN echo "date.timezone ='America/New_York'" >> /usr/local/etc/php/conf.d/timezo
 # Create an image containing Docker PHP extension configurations
 FROM configure-php AS configure-docker-php
 
-# Configure and install Docker PHP extensions
-RUN docker-php-ext-configure gd \
-    && docker-php-ext-install gd \
-    && docker-php-ext-install json \
-    && docker-php-ext-install pdo \
-    && docker-php-ext-install pdo_mysql \
-    && docker-php-ext-install tidy \
-    && docker-php-ext-install zip
+# Ref: https://github.com/mlocati/docker-php-extension-installer
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/install-php-extensions \
+    && install-php-extensions gd \
+    && install-php-extensions json \
+    && install-php-extensions pdo \
+    && install-php-extensions pdo_mysql \
+    && install-php-extensions tidy \
+    && install-php-extensions zip
 
 # =================================================================
 # Create an image containing PHP extension configurations
 FROM configure-docker-php AS install-app
 
-# all of our code with live in `/srv/app`
+# All of our code will live in `/srv/app`
 WORKDIR /srv/app
 
 # Add our project files

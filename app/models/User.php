@@ -19,7 +19,7 @@ class User extends Model
 
     public function getUsers()
     {
-        // For the purpose of this example, we are hardcoding
+        // For the purpose of this example, we are hard coding
         // a set of user records, but normally you would pull
         // these records from your Model like so:
         //

@@ -4,14 +4,18 @@
     <meta charset="uft-8">
     <meta name="author" content="Richard Soares">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MVC Framework</title>
-    <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet">
+    <title>Lightsail MVC for PHP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Montserrat:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
     <?php load_style(['reset','prism','main']) ?>
 </head>
 <body>
 <?php extend_view(['common/header'], $data) ?>
 
-<h3>Language Dictionaries</h3>
+<p><a href="/docs">Go Back</a></p>
+
+<h2>Language Dictionaries</h2>
 
 <p>The following output shows the current language dictionary being used for this URL.</p>
 <pre><code class="language-php"><?php print_r(LANG); ?></code></pre>
@@ -36,7 +40,7 @@
 $config['available_languages'] = ['en', 'fr', 'sp'];</code></pre>
 
 
-<h3>Setting up Language Dictionaries</h3>
+<h2>Setting up Language Dictionaries</h2>
 
 <p>For each language setting in <strong>$config['available_languages']</strong>, you must create a language specific file with a name format like <strong>en_lang.php</strong> 
 and place it in the <strong>/app/language/</strong> directory. When you installed this framework three
@@ -73,7 +77,7 @@ file contains an identical list of Native-Language array keys for each Foreign-L
 ]);</code></pre>
 
 
-<h3>Settings Links with the Current Language</h3>
+<h2>Settings Links with the Current Language</h2>
 
 <p>Within your Controller or View file include the Language Helper file.
 Then pass the URL into the <strong>language_url()</strong> function as shown below.</p>

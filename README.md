@@ -1,16 +1,14 @@
 # MVC Framework
 
-- A Model-View-Controller (MVC) framework for PHP/MySQL (LAMP Stack)
+- A Model-View-Controller (MVC) framework for PHP-8.2 LAMP Stack (Docker Container included)
 - Detailed documentation installed with the framework beyond the summary below.
+- Online Documentation located here: http://54.197.236.196/
 
 ### Easy Setup
 
 - Usage Documents:
-  - Load the site in your you browser and go to the documentation here: www.example.com/docs
-- Dependencies
   - A general understanding of Object-Oriented Programming using PHP.
-  - The PHP PDO-Library for database connectivity.
-  - PHP 7.2, but should work with minimal change for PHP 5.6.
+  - The included Docker Container will build a LAMP Stack for PHP-8.2
 - Database configuration - see /app/config/database.php
 - General Configuration - see /app/config/\*
 
@@ -31,18 +29,16 @@ The model-view-controller pattern has three main components or objects to be use
 ## Requirements
 
 - A general understanding of Object-Oriented Programming using PHP.
-  The PHP PDO-Library for database connectivity.
-- PHP-5.6 > (but future enhancements are leaning towards php7)
+- The included Docker Container will build a LAMP Stack for PHP-8.2
 
 ## Running this MVC Framework on your local computer
 
 The root of this installation contains the following files for spinning up a local Virtual Server on your computer. While neither are a requirement, just a nice convienence, you can load this MVC Framework on any compatible hosting environment.
 
-- A "Dockerfile" for running a Docker Container with Ubuntu/Apache/PHP-7.1.8
+- A "Dockerfile" for running a Docker Container with Ubuntu/Apache/PHP-8.2
   - Run "docker-compose up" from the directory containing root/docker-compose.yml file.
   - Open a browser and go to: http://localhost
   - You do not have to stop/start the Docker container while editing code. Updates are relected in realtime.
-- A "bootstrap.sh" shell script for building a Vagrant Virtual Machine with Ubuntu/Apache/PHP-7.2/MySQL
 
 ## Features of this MVC Framework
 
@@ -53,7 +49,7 @@ The root of this installation contains the following files for spinning up a loc
   - Call and API for report data: http://www.example.com/api/v1/sales-report
 - A Base Model which serves as an abstract to PDO and can be extended by any custom Model.
 - An Organized Directory Structure where public access is separated from the core application.
-- Support for Multiple Languagesspecified by URL's, like: www.domain.com/en/user/123
+- Support for Multiple Languages specified by URL's, like: www.domain.com/en/user/123
 
 ```
 root/
@@ -348,7 +344,7 @@ class User extends Controller {
 }
 ```
 
-Let's assume the we received back the following data when accessing http://my-domain.com/user/report
+Let's assume we received back the following data when accessing http://my-domain.com/user/report
 
 ```
 ['name' => 'Bob Smith', 'age' => '24', 'email' => 'bobsmith@example.com']
@@ -391,7 +387,21 @@ class MyController extends Controller
 
 Session data can be managed using the Session Model within your Controllers making this data persist between browser sessions.
 
-The Session Model will initally check if a Session Cookie exists, and if so, the PHP Session will be loaded with the data stored in the database. If no Session Cookie exists, then a new Session database record and cookie will be generated.
+Setting up your database:
+
+- Apply your database configurations here /app/config/database.php
+- Create the following MySQL table in your database.
+
+```
+CREATE TABLE sessions (
+        session_id CHAR(32) NOT NULL,
+        session_data TEXT NOT NULL,
+        session_lastaccesstime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (session_id)
+    );
+```
+
+The Session Model will initially check if a Session Cookie exists, and if so, the PHP Session will be loaded with the data stored in the database. If no Session Cookie exists, then a new Session database record and cookie will be generated.
 
 The following example is available by visiting here: /docs/session
 Note: You must first set up your database, see below.
@@ -436,20 +446,6 @@ Array
 )
 ```
 
-Setting up your database:
-
-- Apply your database configurations here /app/config/database.php
-- Create the following MySQL table in your database.
-
-```
-CREATE TABLE sessions (
-        session_id CHAR(32) NOT NULL,
-        session_data TEXT NOT NULL,
-        session_lastaccesstime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (session_id)
-    );
-```
-
 **About Buggy Sessions using the Google Chrome Browser**
 Issue 1: The Sessions table described above will record empty records.
 Issue 2: The website may appear to loose your Session cookie (aka: PHPSESSID).
@@ -492,7 +488,7 @@ define('LANG', [
 ]);
 ```
 
-**Settings Links with the Current Language**
+**Setting Links with the Current Language**
 
 Within your Controller or View file include the Language Helper file.
 Then pass the URL into the **language_url()** function as shown below.

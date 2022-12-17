@@ -4,32 +4,33 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: mcv-framework
+    image: lightsail-mvc
     ports:
       - 80:80
     volumes:
       - .:/srv/app
-    links:
-      - mysql
-      - redis
-    environment:
-      DB_HOST: mysql
-      DB_DATABASE: mvc
-      DB_USERNAME: app
-      DB_PASSWORD: password
-      REDIS_HOST: redis
-      SESSION_DRIVER: redis
-      CACHE_DRIVER: redis
-  mysql:
-    image: mysql:5.7
-    ports:
-      - 3306:3306
-    environment:
-      MYSQL_DATABASE: mvc
-      MYSQL_USER: app
-      MYSQL_PASSWORD: password
-      MYSQL_ROOT_PASSWORD: password
-  redis:
-    image: redis:4.0-alpine
-    ports:
-      - 16379:6379
+# Uncomment the following to Add support for MySQl and Redis in this container.
+#    links:
+#      - mysql
+#      - redis
+#    environment:
+#      DB_HOST: mysql
+#      DB_DATABASE: mvc
+#      DB_USERNAME: app
+#      DB_PASSWORD: password
+#      REDIS_HOST: redis
+#      SESSION_DRIVER: redis
+#      CACHE_DRIVER: redis
+#  mysql:
+#    image: mysql:5.7
+#    ports:
+#      - 3306:3306
+#    environment:
+#      MYSQL_DATABASE: mvc
+#      MYSQL_USER: app
+#      MYSQL_PASSWORD: password
+#      MYSQL_ROOT_PASSWORD: password
+#  redis:
+#    image: redis:4.0-alpine
+#    ports:
+#      - 16379:6379

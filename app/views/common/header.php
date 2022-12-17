@@ -1,5 +1,5 @@
 <header>
-    <h1>MVC Framework</h1>
-    <h2>Model-View-Controller Documentation</h2>
+    <img src="/img/light-sail-logo.png" alt="Logo" height="210px">
+    <h1>Lightsail. an MVC for PHP 8.2</h1>
     <hr>
 </header>

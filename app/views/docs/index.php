@@ -4,14 +4,18 @@
     <meta charset="uft-8">
     <meta name="author" content="Richard Soares">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MVC Framework</title>
-    <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet">
+    <title>Lightsail MVC for PHP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Montserrat:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
     <?php load_style(['reset','prism','main']) ?>
 </head>
 <body>
 <?php extend_view(['common/header'], $data) ?>
 
-<h3>Preface</h3>
+<p><a href="/">Go Home</a></p>
+
+<h2>Preface</h2>
 <p>
     A model-view-controller (MVC) framework is a design
     pattern for successfully and efficiently relating the user interface to underlying data models.
@@ -32,30 +36,30 @@
         between classes in the model and view.</li>
 </ul>
 
-<h3>Requirements</h3>
+<a id="requirements"></a>
+<h2>Requirements</h2>
 <ul>
-    <li>A general understanding of Object-Oriented Programming using PHP.</li>
-    <li>Optimize for PHP-7.2, but will run PHP-5.6 with a few adjustments as noted.</li>
-    <li>The PHP PDO-Library for database connectivity. <br />
-        <em>If using less-than PHP-7.2, uncomment lines 19, 20 of /app/core/Model.php (ie: the USE PDO lines) </em>
-    </li>
-
-<h3>Running this MVC Framework on your local computer</h3>
-<p>
-The root of this installation contains the following files for spinning up a local Virtual Server on your computer. While neither
-are a requirement, just a nice convienence, you can load this MVC Framework on any compatible hosting environment.
-</p>
-<ul>
-    <li>A "Dockerfile" for running a Docker Container with Ubuntu/Apache/PHP-7.2
-        <ul>
-            <li>Run "docker-compose up" from the directory containing root/docker-compose.yml file.
-            <li>Open a browser and go to: http://localhost or http://localhost:80
-            <li>You do not have to stop/start the Docker container while editing code. Updates are relected in realtime.
-        </ul>
-    <li>A "bootstrap.sh" shell script for building a Vagrant Virtual Machine with Ubuntu/Apache/PHP-7.2/MySQL
+    <li>A general understanding of Object-Oriented Programming using PHP</li>
+    <li>The included Docker Container will build a LAMP Stack for PHP-8.2</li>
 </ul>
 
-<h3>Features of this MVC Framework</h3>
+<a id="start"></a>
+<h2>Getting Started</h2>
+<p>
+The root of this installation contains the following files for spinning up a local Docker Container on your computer.
+    While this is not a requirement, you can deploy this MVC LAMP Docker Container on any compatible hosting environment.
+</p>
+<ul>
+    <li>A "Dockerfile" for running a Docker Container with Ubuntu/Apache/PHP-8.2
+        <ul>
+            <li>Run "<strong>docker-compose up</strong>" from the directory containing <strong>root/docker-compose.yml</strong> file.
+            <li>Open a browser and go to: <strong>http://localhost</strong>
+            <li>You do not have to stop/start the Docker container while editing code. Code updates are reloaded in realtime.
+        </ul>
+</ul>
+
+<a id="features"></a>
+<h2>Features of this MVC Framework</h2>
 <ul>
     <li>
         <strong>Easy Configuration</strong> with the use of individual config files, like database, routes, etc.
@@ -112,7 +116,7 @@ are a requirement, just a nice convienence, you can load this MVC Framework on a
 </ul>
 
 <a id="routing"></a>
-<h3>URL Routing</h3>
+<h2>URL Routing</h2>
 <p>
     By default, a URL has a one-to-one relationship to the Controller and Method called which has the following format:
 
@@ -129,7 +133,7 @@ example.com/product/4/
 </p>
 <p>
 Normally the second segment of the URL is reserved for the method name, but in the example above it instead
-has a product ID. To overcome routes allow you to remap the URI handler.
+has a product ID. To manage custom routes you can remap the URI handler.
 </p>
 <p>
     <strong>NOTE</strong> it is not a requirement that you pass all parameters in the URL. You can create URL routes
@@ -194,13 +198,17 @@ and the “product_lookup” method.
 the “product_lookup_by_id” method passing in the match as a variable to the method.
 </p>
 
-<h3>Models</h3>
+<a id="models"></a>
+<h2>Models</h2>
 <p>
     Models that you create must be stored in the <strong>/app/models/</strong> directory and MUST use a <strong>CamelCase.php</strong>
     file naming format. The Class name MUST also be named identically as the file name like so:
 </p>
 <pre><code class="language-php">class CameCase extends Model
 { .. }</code></pre>
+<p><strong>Important!</strong> Do not name a Controller file or it's Class name the same as a Model
+    as the names will Collide. A tip to remember is to name your Controller singular <strong>User</strong>
+    and your Model plural <strong>Users</strong> typically helps avoid this issue.</p>
 <p>
     The base Model serves as an abstract to PDO and can be extended by any custom Model. The base Model will handle
     all the heavy lifting to create a proper PDO database query and return results, if any.
@@ -257,7 +265,7 @@ the “product_lookup_by_id” method passing in the match as a variable to the 
 <strong>select()</strong> - Use this method to return multiple records. For example:
 </p>
 <pre><code class="language-php">// Use select() to return multiple records.
-$users = $user->select('users','dept = 12');
+$users = $user->select('users','dept = :dept', [":dept => 12"]);
 $print_r($users);
 // OUTPUT:
 array(
@@ -278,22 +286,37 @@ Employee: Sue
 <br>
 
 <p>
-    <strong>selectOne()</strong> - Use this method this method to return a single record. For example:</li>
+    <strong>selectOne()</strong> - Use this method to return a single record. For example:</li>
 </p>
 <pre><code class="language-php">// Use selectOne() to return a single record.
-$user = $user->selectOne('users','id = 100');
+$user = $user->selectOne('users','id = :id', [":id => 12"]);
 $print_r($user);
 // OUTPUT:
-array('name' => 'Bob', 'id' => '12')
+array('name' => 'Bob Smith', 'id' => '12')
 
 // Display values from this single record.
 echo "Welcome " . $user['name']; 
 // OUTPUT
-Welcome Bob
+Welcome Bob Smith
 </code></pre>
 
+<p>
+    <strong>selectExtended()</strong> - Use this method when custom SQl is required. For example:</li>
+</p>
+<pre><code class="language-php">// Use selectOne() to return a single record.
+$user = $user->selectExtended('select name from users where id = :id',["id:" => 12]);
+$print_r($user);
+// OUTPUT:
+array('name' => 'Bob Smith', 'id' => '12')
 
-<h3>Views</h3>
+// Display values from this single record.
+echo "Welcome " . $user['name'];
+// OUTPUT
+Welcome Bob Smith
+</code></pre>
+
+<a id="views"></a>
+<h2>Views</h2>
 <p>
     Views are the presentation part of the MVC pattern and as such they define design/layout of the page.
     A typical View might look like the following:
@@ -338,7 +361,8 @@ extend_view(['reports/weekly/common/header'], $data)</code></pre>
 For a comprehensive example of passing data into a View, see: <a href="/examples/passing_data">Example for passing values into Views</a>.
 </p>
 
-<h3>Controllers</h3>
+<a id="controllers"></a>
+<h2>Controllers</h2>
 <p>
     To understand how Controllers work we need to back up a little bit and recall how we format a URL. For this example
     lets say we need to query information about a user and display the information on a report.
@@ -424,22 +448,42 @@ For a comprehensive example of passing data into a View, see: <a href="/examples
 * However, you may also use custom routing to hide a sub-directory. See the <a href="#routing">Routing section</a> above.
 </p>
 
-<h3>Sessions</h3>
+<a id="sessions"></a>
+<h2>Sessions</h2>
 <p>
 Session data can be managed using the Session Model within your Controllers making this data persist between browser sessions. 
 </p>
 <p>
-The Session Model will initally check if a Session Cookie exists, and if so, the PHP Session will be loaded with the data stored 
+The Session Model will initially check if a Session Cookie exists, and if so, the PHP Session will be loaded with the data stored
 in the database. If no Session Cookie exists, then a new Session database record and cookie will be generated.
 </p>
+
 <p>
-Run the following example from here: <a href="/docs/session">/docs/session</a>, then reference:
+    <strong>Setting up your database:</strong>
+<ul>
+    <li>Apply your database configurations here <strong>/app/config/database.php</strong>  </li>
+    <li>Create the following MySQL table in your database. </li>
+</ul>
+</p>
+
+<pre><code class="language-text">
+CREATE TABLE sessions (
+        session_id CHAR(32) NOT NULL,
+        session_data TEXT NOT NULL,
+        session_lastaccesstime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (session_id)
+    );
+</code></pre>
+<br>
+<p>
+    <strong>Run the following example from here:</strong> <a href="/docs/session">/docs/session</a>, then reference:
 <ul>
 <li>/app/controllers/Docs/Docs.php - function session()
 <li>/app/models/Sessions.php
 </ul>
-<br />Note: You must first set up your database, see "setting up your database" below.
+
 </p>
+
 <pre><code class="language-php">
 class Docs extends Controller() 
 {
@@ -479,26 +523,24 @@ Array
 
 )
 </code></pre>
-<br />
-<p>
-<strong>Setting up your database:</strong>
+
+<br>
+<strong>About Buggy Sessions using the Google Chrome Browser</strong>
 <ul>
-<li>Apply your database configurations here /app/config/database.php</li>
-<li>Create the following MySQL table in your database. </li>
+    <li>Issue 1: The Sessions table described above will record empty records.</li>
+    <li>Issue 2: The website may appear to loose your Session cookie (aka: PHPSESSID).</li>
+    <li>Cause: There is a known bug in Chrome that will loose track of your Session Cookie as a result of not having a fav.ico icon.</li>
+    <li>Effect: When Chrome does not receive the fav icon upon request Chrome destroys the current Session cookie (aka: PHPSESSID).</li>
+    <li>Solution: Add a fav.ico file into the Public root directory.</li>
 </ul>
-</p>
-
-<pre><code class="language-text">
-CREATE TABLE sessions ( 
-        session_id CHAR(32) NOT NULL, 
-        session_data TEXT NOT NULL, 
-        session_lastaccesstime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
-        PRIMARY KEY (session_id)
-    );
-</code></pre>
 
 
-<h3>Language Dictionaries</h3>
+
+
+
+
+
+<h2>Language Dictionaries</h2>
 
 <p>Information about creating a Multi-Language application <a href="/docs/language">can be found here.</a></p>
 

@@ -51,7 +51,7 @@ class App
          * Which loads the SalesReport controller and calls the "index" method passing to it "january".
          *
          */
-        $this->url = $this->parseUrl($config, $route);
+        $this->url = $this->parseUrl($route, $config);
 
         // Set Language if specified in the URL or set the default language.
         if(count($this->url) >= 1) {
@@ -184,7 +184,7 @@ class App
      * Returns an array containing all parts of the active URL using the method specified in $config.
      * Also, performs URL remapping as needed.
      */
-    protected function parseUrl($config = [], $route)
+    protected function parseUrl( $route, $config = [])
     {
         if(isset($config['uri_protocol']))
         {

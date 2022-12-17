@@ -1,8 +1,8 @@
 <footer>
     <hr>
     <p>
-    Author: Richard Soares
+    Framework Developer: Richard Soares
     <br>
-    Repository: <a href="https://github.com/sonicsleuth/mvc-framework-php">https://github.com/sonicsleuth/mvc-framework-php</a>
+    GitHub Repository: <a href="https://github.com/sonicsleuth/lightsail-mvc">https://github.com/sonicsleuth/lightsail-mvc</a>
     </p>
 </footer>
