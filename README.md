@@ -1,8 +1,7 @@
-# MVC Framework
+# Lightsail PHP Framework
 
 - A Model-View-Controller (MVC) framework for PHP-8.2 LAMP Stack (Docker Container included)
 - Detailed documentation installed with the framework beyond the summary below.
-- Online Documentation located here: http://54.197.236.196/
 
 ### Easy Setup
 

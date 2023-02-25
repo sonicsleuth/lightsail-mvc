@@ -55,6 +55,7 @@ RUN echo "date.timezone ='America/New_York'" >> /usr/local/etc/php/conf.d/timezo
 # Create an image containing Docker PHP extension configurations
 FROM configure-php AS configure-docker-php
 
+# If extenstions fail to install, it might be the source server is offline. Wait, try again later.
 # Ref: https://github.com/mlocati/docker-php-extension-installer
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
@@ -64,7 +65,8 @@ RUN chmod +x /usr/local/bin/install-php-extensions \
     && install-php-extensions pdo \
     && install-php-extensions pdo_mysql \
     && install-php-extensions tidy \
-    && install-php-extensions zip
+    && install-php-extensions zip \
+    && install-php-extensions imap
 
 # =================================================================
 # Create an image containing PHP extension configurations
