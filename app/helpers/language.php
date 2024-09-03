@@ -5,7 +5,6 @@
  */
 
  function language_url($url) {
-
     if(isset($_COOKIE['language'])) {
         return '/' . $_COOKIE['language'] . $url;
     } else {

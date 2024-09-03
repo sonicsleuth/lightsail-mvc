@@ -53,33 +53,38 @@ class App
          */
         $this->url = $this->parseUrl($route, $config);
 
-        // Set Language if specified in the URL or set the default language.
-        if(count($this->url) >= 1) {
-            $first_url_segment = $this->url[0];
-        } else {
-            $first_url_segment = '';
-        }
-        if(in_array($first_url_segment, $config['available_languages'])) {
-            if(file_exists(LANGUAGE_PATH . strtolower($first_url_segment) . '_lang.php')) {
-                require_once(LANGUAGE_PATH . strtolower($first_url_segment) . '_lang.php');
-                setcookie("language", strtolower($first_url_segment), time() + (60*60*24*30));
+        // Determine the language segment from the URL, or use an empty string if not available.
+        $first_url_segment = $this->url[0] ?? '';
+
+        // Check if the URL segment matches an available language.
+        $language = in_array($first_url_segment, $config['available_languages']) ? strtolower($first_url_segment) : strtolower($this->default_language);
+
+        // Set the language file path.
+        $language_file = LANGUAGE_PATH . $language . '_lang.php';
+
+        // Load the language file if it exists.
+        if (file_exists($language_file) && (!defined('LANG') || $language !== strtolower($this->default_language))) {
+            require_once($language_file);
+            setcookie("language", $language, time() + (60 * 60 * 24 * 30));
+
+            // Remove the language segment from the URL array if it was part of the URL.
+            if ($language === strtolower($first_url_segment)) {
                 unset($this->url[0]);
-            } 
-        } else {
-            if(file_exists(LANGUAGE_PATH . strtolower($this->default_language) . '_lang.php') && !defined('LANG')) {
-                require_once(LANGUAGE_PATH . strtolower($this->default_language) . '_lang.php');
-                setcookie("language", strtolower($this->default_language), time() + (60*60*24*30));
-            } 
+            }
         }
 
-        // Set Controller or use default Controller.
-        // Walk down the URL assuming the previous index may be a directory under Controllers.
+
+        // Initialize the controller endpoint and set a flag for existence.
         $controller_exists = false;
-        foreach($this->url as $key => $value )
-        {
+
+        // Walk down the URL assuming the previous index may be a directory under Controllers.
+        foreach ($this->url as $key => $value) {
+            // Convert the value to CamelCase and append to the controller endpoint.
             $this->controller_endpoint .= $this->dashesToCamelCase($value);
 
-            if(file_exists(CONTROLLERS_PATH . $this->controller_endpoint . '.php')) {
+            // Check if the controller file exists.
+            $controller_path = CONTROLLERS_PATH . $this->controller_endpoint . '.php';
+            if (file_exists($controller_path)) {
                 $this->controller = $this->dashesToCamelCase($value);
                 $this->method_index = $key + 1;
                 unset($this->url[$key]);
@@ -87,8 +92,7 @@ class App
                 break;
             }
 
-            // Depending on your server, directory paths may be case-sensitive.
-            // Configure the default here: /App/config.php
+            // Handle default controller path case sensitivity.
             switch ($config['default_controller_path_case']) {
                 case 'lowercase':
                     $this->controller_endpoint = strtolower($this->controller_endpoint);
@@ -101,6 +105,7 @@ class App
             unset($this->url[$key]);
             $this->controller_endpoint .= '/';
         }
+
 
         if(!$controller_exists) {
             $this->controller_endpoint = $this->controller;
@@ -140,10 +145,9 @@ class App
      * If the second parameter is 'true' (default) - "camel-case" returns "CamelCase"
      * If the second parameter is 'false' - "camel-case" returns "camelCase"
      */
-    protected function dashesToCamelCase($string, $capitalizeFirstCharacter = true)
+    protected function dashesToCamelCase($string, $capitalizeFirstCharacter = true): string
     {
-        $str = str_replace(' ', '', ucwords(str_replace('-', ' ', $string))); // < php5.5.9
-        //$str = str_replace('-', '', ucwords($string, '-')); // > php5.5.9
+        $str = str_replace('-', '', ucwords($string, '-'));
 
         if (!$capitalizeFirstCharacter) {
             $str = lcfirst($str);
@@ -151,6 +155,7 @@ class App
 
         return $str;
     }
+
 
     /**
      * @param $url
@@ -160,76 +165,58 @@ class App
      * Remaps the $url string provided when a RegEx pattern from $routes is matched,
      * otherwise, return $url unchanged.
      */
-    protected function remapUrl($url, $route)
+    protected function remapUrl($url, $route): string
     {
-        foreach($route as $pattern => $replacement)
-        {
-            $pattern = str_replace(":any", "(.+)", $pattern);
-            $pattern = str_replace(":num", "(\d+)", $pattern);
-            $pattern = '/' . str_replace("/", "\/", $pattern) . '/i';
-            $replacement = '/'.$replacement.'/';
-            $route_url = preg_replace($pattern, $replacement, $url);
-            if($route_url !== $url && $route_url !== null) {
+        foreach ($route as $pattern => $replacement) {
+            $pattern = sprintf('/%s/i', str_replace([':any', ':num', '/'], ['(.+)', '(\d+)', '\/'], $pattern));
+            $route_url = preg_replace($pattern, "/$replacement/", $url);
+
+            if ($route_url !== $url && $route_url !== null) {
                 return $route_url;
             }
         }
+
         return $url;
     }
 
+
     /**
+     * @param array $route
      * @param array $config
-     * @param $route
      * @return array
      *
      * Returns an array containing all parts of the active URL using the method specified in $config.
      * Also, performs URL remapping as needed.
      */
-    protected function parseUrl( $route, $config = [])
+    protected function parseUrl(array $route, array $config = []): array
     {
-        if(isset($config['uri_protocol']))
-        {
-            switch($config['uri_protocol'])
-            {
-                case 'PATH_INFO':
-                    if(isset($_SERVER['PATH_INFO']))
-                    {
-                        $this->url_string = $this->remapUrl(filter_var(rtrim($_SERVER['PATH_INFO']), '/', FILTER_SANITIZE_URL), $route);
-                        return $url = explode('/', $this->url_string);
-                    } else {
-                        return array();
-                    }
-                    break;
-                case 'QUERY_STRING':
-                    if(isset($_SERVER['QUERY_STRING']))
-                    {
-                        list($name,$value) = explode('=',$_SERVER['QUERY_STRING']);
-                        $this->url_string = $this->remapUrl(filter_var(rtrim($value, '/'), FILTER_SANITIZE_URL), $route);
-                        return $url = explode('/', $this->url_string);
-                    } else {
-                        return array();
-                    }
-                    break;
-                case 'REQUEST_URI':
-                    if(isset($_SERVER['REQUEST_URI']))
-                    {
-                        $this->url_string = $this->remapUrl(filter_var(ltrim($_SERVER['REQUEST_URI'], '/'), FILTER_SANITIZE_URL), $route);
-                        return $url = explode('/', $this->url_string);
-                    } else {
-                        return array();
-                    }
-                    break;
-                default:
-                    if(isset($_GET['url']))
-                    {
-                        $this->url_string = $this->remapUrl(filter_var(rtrim($_GET['url'], '/'), FILTER_SANITIZE_URL), $route);
-                        return $url = explode('/', $this->url_string);
-                    } else {
-                        return array();
-                    }
-                    break;
-            }
-        } else {
+        if (!isset($config['uri_protocol'])) {
             die('The URI PROTOCOL configuration is not set.');
         }
+
+        $url = '';
+
+        switch ($config['uri_protocol']) {
+            case 'PATH_INFO':
+                $url = $_SERVER['PATH_INFO'] ?? '';
+                break;
+            case 'QUERY_STRING':
+                $url = isset($_SERVER['QUERY_STRING']) ? explode('=', $_SERVER['QUERY_STRING'])[1] : '';
+                break;
+            case 'REQUEST_URI':
+                $url = $_SERVER['REQUEST_URI'] ?? '';
+                $url = ltrim($url, '/');
+                break;
+            default:
+                $url = $_GET['url'] ?? '';
+                break;
+        }
+
+        if (empty($url)) {
+            return [];
+        }
+
+        $this->url_string = $this->remapUrl(filter_var(rtrim($url, '/'), FILTER_SANITIZE_URL), $route);
+        return explode('/', $this->url_string);
     }
 }

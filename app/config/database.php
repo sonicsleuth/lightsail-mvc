@@ -8,7 +8,7 @@
  * -------------------------------------------------------------------
  * EXPLANATION OF VARIABLES
  * -------------------------------------------------------------------
- * DB_DRIVER    The database type. Currently Supported: mysql, mysqli, sqllite
+ * DB_DRIVER    The database type. Currently Supported: mysql, mysqli, sqlite
  * DB_HOSTNAME  The hostname of your database server
  * DB_DATABASE  The name of the database you want to connect to
  * DB_USERNAME  The username used to connect to the database

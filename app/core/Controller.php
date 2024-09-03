@@ -8,16 +8,18 @@ class Controller
      *
      * Load specified Model if the file exists.
      */
-    protected function model($model)
+    protected function model(string $model): ?object
     {
-        if(file_exists(MODELS_PATH . $model . '.php'))
-        {
-            require_once MODELS_PATH . $model . '.php';
+        $modelFile = MODELS_PATH . $model . '.php';
+
+        if (file_exists($modelFile)) {
+            require_once $modelFile;
             return new $model();
-        } else {
-            return false;
         }
+
+        return null;
     }
+
 
     /**
      * @param $view
@@ -26,23 +28,22 @@ class Controller
      *
      * Load specified View if the file exists.
      * The values of $data are available to the View as are the
-     * index of each $data as it's own variable.
+     * index of each $data as its own variable.
      */
-    protected function view($view, $data = [])
+    protected function view(string $view, array $data = []): bool
     {
-        if(file_exists(VIEWS_PATH . $view . '.php'))
-        {
-            // Set each index of data to its named variable.
-            if( count($data) > 0 ) {
-                foreach($data as $key => $value) {
-                    $$key = $value;
-                }
-            }
-            require_once VIEWS_PATH . $view . '.php';
-        } else {
-            return false;
+        $viewFile = VIEWS_PATH . $view . '.php';
+
+        if (file_exists($viewFile)) {
+            // Extract data array to variables.
+            extract($data);
+            require_once $viewFile;
+            return true;
         }
+
+        return false;
     }
+
 
     /**
      * @param array $files
@@ -50,11 +51,16 @@ class Controller
      * Load Helper files.
      *
      */
-    protected function load_helper($files = [])
+    protected function load_helper(array $files = []): void
     {
-        foreach ($files as $file)
-        {
-            require_once HELPERS_PATH . $file . '.php';
-        }
+        array_walk($files, function($file) {
+            $helperFile = HELPERS_PATH . $file . '.php';
+            if (file_exists($helperFile)) {
+                require_once $helperFile;
+            } else {
+                throw new \RuntimeException("Helper file not found: $helperFile");
+            }
+        });
     }
+
 }

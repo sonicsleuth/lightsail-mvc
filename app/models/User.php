@@ -2,8 +2,8 @@
 
 class User extends Model
 {
-    public $fname;
-    public $lname;
+    public string $fname;
+    public string $lname;
     private $db;
 
     public function __construct()
@@ -12,12 +12,12 @@ class User extends Model
         $this->db = new Model();
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->fname . ' ' . $this->lname;
     }
 
-    public function getUsers()
+    public function getUsers(): array
     {
         // For the purpose of this example, we are hard coding
         // a set of user records, but normally you would pull

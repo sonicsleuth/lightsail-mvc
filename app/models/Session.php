@@ -64,10 +64,11 @@ class Session extends Model
     should be treated as a constructor, so you could use it to initialize 
     class variables if you’re using an OOP approach.
     */
-    function open($path, $name) 
+    function open(string $path, string $name): bool
     {
-        $sql = "INSERT INTO sessions SET session_id = :session_id" . 
-                ", session_data = '' ON DUPLICATE KEY UPDATE session_lastaccesstime = NOW()";
+        $sql = "INSERT INTO sessions (session_id, session_data) ".
+                "VALUES (:session_id, '') ".
+                "ON DUPLICATE KEY UPDATE session_lastaccesstime = NOW()";
 
         $bind = [
             ':session_id' => session_id(),
@@ -87,7 +88,9 @@ class Session extends Model
     */
     function read($session_id) 
     {
-        $sql = "SELECT session_data FROM sessions where session_id = :session_id";
+        $sql = "SELECT session_data ".
+                "FROM sessions ".
+                "WHERE session_id = :session_id";
 
         $bind = [
             ':session_id' => $session_id,
@@ -109,10 +112,11 @@ class Session extends Model
     */
     function write($session_id, $session_data) 
     { 
-        $sql = "INSERT INTO sessions SET session_id = :session_id" . 
+        $sql = "INSERT INTO sessions ".
+                "SET session_id = :session_id" .
                 ", session_data = :session_data" . 
-                ", session_lastaccesstime = NOW()" . 
-                " ON DUPLICATE KEY UPDATE session_data = :session_data";
+                ", session_lastaccesstime = NOW() " .
+                "ON DUPLICATE KEY UPDATE session_data = :session_data";
 
         $bind = [
             ':session_id' => $session_id,
@@ -150,7 +154,8 @@ class Session extends Model
     */
     function destroy($session_id) 
     {
-        $sql = "DELETE FROM sessions WHERE session_id = :session_id"; 
+        $sql = "DELETE FROM sessions ".
+                "WHERE session_id = :session_id";
 
         $bind = [
             ':session_id' => $session_id,
@@ -175,7 +180,8 @@ class Session extends Model
     */
     function gc($lifetime) 
     {
-        $sql = "DELETE FROM sessions WHERE session_lastaccesstime < DATE_SUB(NOW(), INTERVAL " . $lifetime . " SECOND)";
+        $sql = "DELETE FROM sessions ".
+                "WHERE session_lastaccesstime < DATE_SUB(NOW(), INTERVAL " . $lifetime . " SECOND)";
         
         $this->db->run($sql);
 

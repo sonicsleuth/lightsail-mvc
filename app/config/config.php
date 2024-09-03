@@ -3,12 +3,12 @@
 * --------------------------------------------------------------------------
 * Base Site URL - SSL HTTPS Management
 * --------------------------------------------------------------------------
-* URL to your MVC root. Typically this will be your base URL,
+* URL to your MVC root. Typically, this will be your base URL,
 * WITH a trailing slash:
 *
 *	http://example.com/
 *
-* If this is not set then the we will guess the protocol, domain and
+* If this is not set then we will guess the protocol, domain and
 * path to your installation.
 *
 * The following method does better at managing HTTP and HTTPS protocol changes.
@@ -83,7 +83,7 @@ $config['default_language'] = 'en';
 * --------------------------------------------------------------------------
 * Available Languages
 * --------------------------------------------------------------------------
-* Sets a list of avilable language translator files located here: /app/language/en_lang.php
+* Sets a list of available language translator files located here: /app/language/en_lang.php
 * There must be a language file for each language specified in $config['available_languages']
 */
 $config['available_languages'] = ['en', 'fr', 'sp'];

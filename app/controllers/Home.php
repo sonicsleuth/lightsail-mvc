@@ -7,12 +7,12 @@ class Home extends Controller
         $this->load_helper(['view']);
     }
 
-    public function index($param1 = '', $param2 = '')
+    public function index(string $param1 = '', string $param2 = ''): void
     {
         $this->view('home');
     }
 
-    public function phpinfo()
+    public function phpinfo(): void
     {
         echo phpinfo();
     }

@@ -25,12 +25,12 @@
     that allows them to significantly reduce the time it takes to develop applications with user interfaces.
 </p>
 <p>
-    The model-view-controller pattern has three main components or objects to be used in software development:
+    The model-view-controller pattern has three main components:
 </p>
 <ul>
-    <li>A <strong>Model</strong> , which represents the underlying, logical structure of data in a software application and the high-level
-        class associated with it. This object model does not contain any information about the user interface.</li>
-    <li>A <strong>View</strong> , which is a collection of classes representing the elements in the user interface (all of the things the
+    <li>A <strong>Model</strong> , which represents the underlying, logical structure of data in a software application.
+        The object model does not contain any information about the user interface.</li>
+    <li>A <strong>View</strong> , which is a collection of classes representing the elements in the user interface (those elements the
         user can see and respond to on the screen, such as buttons, display boxes, and so forth).</li>
     <li>A <strong>Controller</strong> , which represents the classes connecting the model and the view, and is used to communicate 
         between classes in the model and view.</li>
@@ -40,14 +40,14 @@
 <h2>Requirements</h2>
 <ul>
     <li>A general understanding of Object-Oriented Programming using PHP</li>
-    <li>The included Docker Container will build a LAMP Stack for PHP-8.2</li>
+    <li>The included Docker Container will build a LAMP Stack for PHP. </li>
 </ul>
 
 <a id="start"></a>
 <h2>Getting Started</h2>
 <p>
 The root of this installation contains the following files for spinning up a local Docker Container on your computer.
-    While this is not a requirement, you can deploy this MVC LAMP Docker Container on any compatible hosting environment.
+    While this is not a requirement, you can deploy this Docker Container on any compatible web hosting environment.
 </p>
 <ul>
     <li>A "Dockerfile" for running a Docker Container with Ubuntu/Apache/PHP-8.2
@@ -62,21 +62,21 @@ The root of this installation contains the following files for spinning up a loc
 <h2>Features of this MVC Framework</h2>
 <ul>
     <li>
-        <strong>Easy Configuration</strong> with the use of individual config files, like database, routes, etc.
+        <strong>Easy Configuration</strong> with the use of individual config files, like database, routes, and so on.
     </li>
     <li>
         <strong>Routing</strong> which is the method in which you specify the URLs that will load your pages, for example:
         <ul>
-            <li>Get a user: http://www.example.com/user/list</li>
+            <li>Get a a list of users: http://www.example.com/user/list</li>
             <li>Get a product: http://www.example.com/product/id/123</li>
             <li>Call and API for report data: http://www.example.com/api/v1/sales-report</li>
         </ul>
     </li>
     <li>
-        A <strong>Base Model</strong> which serves as an abstract to PDO and can be extended by any custom Model.
+        A <strong>Base Model</strong> which serves as an abstract to PHP-PDO.
     </li>
     <li>
-        An <strong>Organized Directory Structure</strong> where public access is separated from the core application.
+        An <strong>Organized Directory Structure</strong> how public access is separated from the core application.
     </li>
     <li>Support for <strong>Multiple Languages</strong> specified by URL's, like: www.domain.com/<strong>en</strong>/user/123</li>
 <pre><code class="language-text">root
@@ -124,7 +124,7 @@ The root of this installation contains the following files for spinning up a loc
 <pre><code class="language-text">http://example.com/controller/method/param1/param2</code></pre>
 <p>
 In some instances, however, you may want to remap this relationship so that a different class/method can be
-called instead of the one corresponding to the URL. For example, let’s say you want your URLs to have this prototype:
+called instead of the one corresponding to the URL. For example, let’s say you want your URLs to have this format:
 <pre><code class="language-text">example.com/product/1/
 example.com/product/2/
 example.com/product/3/
@@ -148,12 +148,12 @@ A typical wildcard route might look something like this:
 <pre><code class="language-php">$route['product/:num'] = 'catalog/product_lookup/$1';</code></pre>
 </p>
 <p>
-In a route, the array key contains the URI to be matched, while the array value contains the destination it should
-be re-routed to. In the above example, if the literal word “product” is found in the first segment of the URL, and a
+In a route, the array key contains the URL to be matched, while the array value contains the destination it should
+be re-routed. In the above example, if the literal word “product” is found in the first segment of the URL, and a
 number is found in the second segment, the “catalog” class and the “product_lookup” method are instead used.
 </p>
 <p>
-You can match literal values or you can use two wildcard types:
+You can match literal values, or you can use two wildcard types:
 (:num) will match a segment containing only numbers. (:any) will match a segment containing any character
 (except for ‘/’, which is the segment delimiter).
 </p>

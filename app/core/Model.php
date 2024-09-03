@@ -1,61 +1,53 @@
 <?php
 /**
- * @version 1.0.3 PDO Abstraction for common CRUD statements with auto-column binding.
- *
- * @internal the debug() method imports "model_error.css" for nice error styling. Adjust path to this file accordingly.
- *
- * @update 1.0.3 added error_log() within the __construct() to record connection failures.
- *
- * @update 1.0.4 clarified method comments with regards to calling methods.
- *
- * @update 1.0.5 updated run() function to return last record id on insert, and affected records for update or delete.
- *
- * @update 1.0.7 HTML Entities returned from the database will be decoded by default when calling select() or run() methods.
- * 
- * @update 1.0.8 Return FALSE if no data found when using select() method.
- * 
- * @update 1.0.9 Added selectOne() method for single record queries.
+ * A PDO Abstraction for common CRUD statements with auto-column binding.
+ * For use with MySQL for example.
  */
-
-/* PDO is automatically included in PHP 7.2+, otherwise uncomment the following lines.
-use PDO;
-use PDOException;
-*/
 
 class Model extends PDO {
 
-    private $error;
+    private string $error;
     private $sql;
     private $bind;
     private $errorCallbackFunction;
     private $errorMsgFormat;
     private $errorCssPath = 'model_error.css'; // Styles to pretty up the custom error output.
 
-    public function __construct() {
-        $options = array(
+    public function __construct()
+    {
+        $dsn = sprintf('%s:host=%s;dbname=%s', DB_DRIVER, DB_HOSTNAME, DB_DATABASE);
+        $options = [
             PDO::ATTR_PERSISTENT => true,
-            PDO::ATTR_ERRMODE    => PDO::ERRMODE_EXCEPTION
-        );
+            PDO::ATTR_ERRMODE    => PDO::ERRMODE_EXCEPTION,
+        ];
 
         try {
-            parent::__construct(DB_DRIVER . ':host=' . DB_HOSTNAME . ';dbname=' . DB_DATABASE . '', DB_USERNAME, DB_PASSWORD, $options);
+            parent::__construct($dsn, DB_USERNAME, DB_PASSWORD, $options);
         } catch (PDOException $e) {
             $this->error = $e->getMessage();
             error_log('DB Model Connection Error: ' . $this->error, 0);
-            echo 'DB Connection Error: ' . $this->error;
+
+            // Consider using a more user-friendly message in production
+            if (ini_get('display_errors')) {
+                echo 'DB Connection Error: ' . $this->error;
+            } else {
+                echo 'A database connection error occurred.';
+            }
         }
     }
 
     /**
-     * run()
-     * 
-     * This method is used to run free-form SQL statements that can't be handled by the included delete, insert, select,
-     * or update methods. If no SQL errors are produced, this method will return the number of affected rows for
-     * DELETE, INSERT, and UPDATE statements, or an object of results for SELECT, DESCRIBE, and PRAGMA statements.
+     * @param string $sql
+     * @param array $bind
+     * @param bool $entity_decode
+     * @return mixed
+     *  This method is used to run free-form SQL statements that can't be handled by the included delete, insert, select,
+     *  or update methods. If no SQL errors are produced, this method will return the number of affected rows for
+     *  DELETE, INSERT, and UPDATE statements, or an object of results for SELECT, DESCRIBE, and PRAGMA statements.
      *
-     * Note: HTML Entities returned from 'select' queries will be decoded by default. Set $entity_decode = false otherwise.
+     * HTML Entities returned from 'select' queries will be decoded by default. Set $entity_decode = false otherwise.
      */
-    public function run($sql, $bind = "", $entity_decode = true)
+    public function run(string $sql, array $bind = [], bool $entity_decode = true): mixed
     {
         $this->sql   = trim($sql);
         $this->bind  = $this->cleanup($bind);
@@ -64,18 +56,24 @@ class Model extends PDO {
         try {
             $pdostmt = $this->prepare($this->sql);
             if ($pdostmt->execute($this->bind) !== false) {
-                if (preg_match("/^(" . implode("|", array("select", "describe", "pragma")) . ") /i", $this->sql)) {
-                    $results = $pdostmt->fetchAll(PDO::FETCH_ASSOC);
-                    if($entity_decode) {
-                        array_walk_recursive($results, function (&$item) {
-                            $item = htmlspecialchars_decode($item);
-                        });
-                    }
-                    return $results;
-                } elseif (preg_match("/^(" . implode("|", array("delete", "update")) . ") /i", $this->sql)) {
-                    return $pdostmt->rowCount(); // return records affected.
-                } elseif (preg_match("/^(" . implode("|", array("insert")) . ") /i", $this->sql)) {
-                    return $this->lastInsertId(); // return new record id.
+                $sqlType = strtolower(strtok($this->sql, ' '));
+
+                switch ($sqlType) {
+                    case 'select':
+                    case 'describe':
+                    case 'pragma':
+                        $results = $pdostmt->fetchAll(PDO::FETCH_ASSOC);
+                        if ($entity_decode) {
+                            array_walk_recursive($results, fn(&$item) => $item = htmlspecialchars_decode($item));
+                        }
+                        return $results;
+
+                    case 'delete':
+                    case 'update':
+                        return $pdostmt->rowCount();
+
+                    case 'insert':
+                        return $this->lastInsertId();
                 }
             }
         } catch (PDOException $e) {
@@ -83,238 +81,270 @@ class Model extends PDO {
             $this->debug();
             return false;
         }
+
+        return false;
     }
 
     /**
-     * select()
-     * 
-     * Example #1
-     * $results = $this->db->select("mytable");
+     * @param string $table
+     * @param string $where
+     * @param array $bind
+     * @param string $fields
+     * @param bool $entity_decode
+     * @return mixed
      *
-     * Example #2
-     * $results = $this->db->select("mytable", "Gender = 'male'");
+     *  Example #1 - Return All.
+     *  $results = $this->db->select("table_name");
      *
-     * Example #3 w/Prepared Statement
-     * $search = "J";
-     * $bind = array(
-     *      ":search" => "%$search"
-     * );
-     * $results = $this->db->select("mytable", "FName LIKE :search", $bind);
-     * 
-     * One or more records are returned as array of array.  If no records found, FALSE is returned.
+     *  Example #2 - Where condition.
+     *  $results = $this->db->select("table_name", "Gender = 'male'");
      *
-     * Note: HTML Entities returned from the database will be decoded by default. Set $entity_decode = false otherwise.
+     *  Example #3 - Prepared statement.
+     *  $search = "John"; - String to find.
+     *
+     *  Where clause variable bindings:
+     *  $bind = array(
+     *       ":search" => "%$search"
+     *  );
+     *
+     *  $results = $this->db->select("table_name", "FName LIKE :search", $bind);
+     *
+     *  One or more records are returned as array of array. If no records found, FALSE is returned.
+     *  HTML Entities returned from the database will be decoded by default. Set $entity_decode = false otherwise.
      */
-    public function select($table, $where = "", $bind = "", $fields = "*", $entity_decode = true)
+    public function select(string $table, string $where = "", array $bind = [], string $fields = "*", bool $entity_decode = true): mixed
     {
-        $sql = "SELECT " . $fields . " FROM " . $table;
+        // Build the SQL query
+        $sql = sprintf('SELECT %s FROM %s', $fields, $table);
+
         if (!empty($where)) {
-            $sql .= " WHERE " . $where;
-        }  
+            $sql .= " WHERE $where";
+        }
+
         $sql .= ";";
 
+        // Execute the query and retrieve the data
         $data = $this->run($sql, $bind, $entity_decode);
 
-        if(empty($data)) {
-            return false;
-        }
-
-        return $data;
+        // Return the data or false if empty
+        return !empty($data) ? $data : false;
     }
 
+
     /**
-     * selectOne()
-     * 
-     * Use this method in place of select() when you want to return a single record.
-     * 
-     * This method functions identically as select() accept it returns the results as a single array
-     * and will LIMIT the results to the first record found.
+     * @param string $table
+     * @param string $where
+     * @param array $bind
+     * @param string $fields
+     * @param bool $entity_decode
+     * @return mixed
+     *
+     *  Use this method in place of select() when you want to return a single record.
+     *
+     *  This method functions identically as select() accept it returns the results as a single array
+     *  and will LIMIT the results to the first record found.
      */
-    public function selectOne($table, $where = "", $bind = "", $fields = "*", $entity_decode = true)
+    public function selectOne(string $table, string $where = "", array $bind = [], string $fields = "*", bool $entity_decode = true): mixed
     {
-        $sql = "SELECT " . $fields . " FROM " . $table;
+        // Build the SQL query with LIMIT 1
+        $sql = sprintf('SELECT %s FROM %s', $fields, $table);
+
         if (!empty($where)) {
-            $sql .= " WHERE " . $where . " LIMIT 1";
+            $sql .= " WHERE $where LIMIT 1";
         }
+
         $sql .= ";";
 
+        // Execute the query and retrieve the data
         $data = $this->run($sql, $bind, $entity_decode);
 
-        if(empty($data)) {
-            return false;
-        }
-
-        return $data[0];
+        // Return the first result or false if no data is found
+        return $data[0] ?? false;
     }
 
+
     /**
-     * selectExtended()
-     * 
-     * Use this method when complex SQL statements are required, like table JOINS, are required.
-     * 
-     * Example:
-     * $sql = "select * from users u join preferences p on p.user_id = u.id where p.role = :role ";
-     * $bind = array (':role' => 'admin');
-     * $results = $this->db->selectExtended($sql, $bind);
-     * 
-     * Note: HTML Entities returned from the database will be decoded by default. Set $entity_decode = false otherwise.
+     * @param string $sql
+     * @param array $bind
+     * @param bool $entity_decode
+     * @return mixed
+     *
+     *  Use this method when complex SQL statements are required, like table JOINS, are required.
+     *
+     *  Example:
+     *  $sql = "select * from users u join preferences p on p.user_id = u.id where p.role = :role ";
+     *  $bind = array (':role' => 'admin');
+     *  $results = $this->db->selectExtended($sql, $bind);
+     *
+     *  HTML Entities returned from the database will be decoded by default. Set $entity_decode = false otherwise.
      */
-    public function selectExtended($sql, $bind = "", $entity_decode = true)
+    public function selectExtended(string $sql, array $bind = [], bool $entity_decode = true): mixed
     {
         $data = $this->run($sql, $bind, $entity_decode);
 
-        if(empty($data)) {
+        if (empty($data)) {
             return false;
-        } elseif (count($data[0]) > 1) {
-            return $data; // return full index of records.
-        } else {
-            return $data[0]; // return single record.
         }
 
+        // Determine if the result is a single column or multiple columns
+        return (count($data[0]) > 1) ? $data : $data[0];
     }
 
+
     /**
-     * insert()
-     * 
-     * If no SQL errors are produced, this method will return the number of rows affected by the INSERT statement.
+     * @param string $table
+     * @param array $info
+     * @return mixed
      *
-     * Example #1:
-     * $insert = array(
-     *      "FName" => "John",
-     *      "LName" => "Doe",
-     *      "Age" => 26,
-     *      "Gender" => "male"
-     * );
-     * $this->db->insert("mytable", $insert);
+     *  If no SQL errors are produced, this method will return the number of rows affected by the INSERT statement.
+     *
+     *  Column Names and Values to Insert:
+     *  $insert = array(
+     *       "FName" => "John",
+     *       "LName" => "Doe",
+     *       "Age" => 26,
+     *       "Gender" => "male"
+     *  );
+     *  $this->db->insert("table_name", $insert);
      */
-    public function insert($table, $info)
+    public function insert(string $table, array $info): mixed
     {
         $fields = $this->filter($table, $info);
-        $sql    = "INSERT INTO " . $table . " (" . implode($fields, ", ") . ") VALUES (:" . implode($fields, ", :") . ");";
-        $bind   = array();
-        foreach ($fields as $field) {
-            $bind[":$field"] = $info[$field];
-        }
+
+        $columns = implode(', ', $fields);
+        $placeholders = implode(', :', $fields);
+        $sql = sprintf("INSERT INTO %s (%s) VALUES (:%s);", $table, $columns, $placeholders);
+
+        $bind = array_map(fn($field) => $info[$field], $fields);
+        $bind = array_combine(array_map(fn($field) => ":$field", $fields), $bind);
 
         return $this->run($sql, $bind);
     }
 
+
     /**
-     * update()
-     * 
-     * If no SQL errors are produced, this method will return the number of rows affected by the UPDATE statement.
+     * @param string $table
+     * @param array $info
+     * @param string $where
+     * @param array $bind
+     * @return mixed
      *
-     * Example #1
-     * $update = array(
-     *      "FName" => "Jane",
-     *      "Gender" => "female"
-     * );
-     * $this->db->update("mytable", $update, "FName = 'John'");
+     *  If no SQL errors are produced, this method will return the number of rows affected by the UPDATE statement.
      *
-     * Example #2 w/Prepared Statement
-     * $update = array(
-     *      "Age" => 24
-     * );
-     * $fname = "Jane";
-     * $lname = "Doe";
-     * $bind = array(
-     *      ":fname" => $fname,
-     *      ":lname" => $lname
-     * );
-     * $this->db->update("mytable", $update, "FName = :fname AND LName = :lname", $bind);
+     * Column Name and Value to update:
+     *  $update = array(
+     *       "Age" => 24
+     *  );
+     *
+     *  Where clause variable bindings:
+     *  $bind = array(
+     *       ":fname" => "Jane",
+     *       ":lname" => "Doe"
+     *  );
+     *
+     *  $this->db->update("table_name", $update, "FName = :fname AND LName = :lname", $bind);
      */
-    public function update($table, $info, $where, $bind = "")
+    public function update(string $table, array $info, string $where, array $bind = []): mixed
     {
-        $fields    = $this->filter($table, $info);
-        $fieldSize = sizeof($fields);
+        $fields = $this->filter($table, $info);
 
-        $sql = "UPDATE " . $table . " SET ";
-        for ($f = 0; $f < $fieldSize; ++$f) {
-            if ($f > 0) {
-                $sql .= ", ";
-            } 
-            $sql .= $fields[$f] . " = :update_" . $fields[$f];
-        }
-        $sql .= " WHERE " . $where . ";";
+        $setClause = implode(', ', array_map(fn($field) => "$field = :update_$field", $fields));
+        $sql = sprintf("UPDATE %s SET %s WHERE %s;", $table, $setClause, $where);
 
+        // Merge the existing bind parameters with the new ones for the update
+        $updateBind = array_combine(
+            array_map(fn($field) => ":update_$field", $fields),
+            array_map(fn($field) => $info[$field], $fields)
+        );
+
+        $bind = array_merge($this->cleanup($bind), $updateBind);
+
+        return $this->run($sql, $bind);
+    }
+
+
+    /**
+     * @param string $table
+     * @param string $where
+     * @param array $bind
+     * @return bool
+     *
+     *  If no SQL errors are produced, this method will return the number of rows affected by the DELETE statement.
+     *
+     *  Method #1
+     *  $this->db->delete("table_name", "Age < 30");
+     *
+     *  Method #2 w/Prepared Statement
+     *
+     *  Where clause variable bindings:
+     *  $bind = array(
+     *       ":lname" => "Smith"
+     *  )
+     *
+     *  $this->db->delete("table_name", "LName = :lname", $bind);
+     */
+    public function delete(string $table, string $where, array $bind = []): bool
+    {
+        $sql = sprintf("DELETE FROM %s WHERE %s;", $table, $where);
         $bind = $this->cleanup($bind);
-        foreach ($fields as $field) {
-            $bind[":update_$field"] = $info[$field];
-        }
-        
-        return $this->run($sql, $bind);
+
+        return $this->run($sql, $bind) !== false;
     }
 
     /**
-     * delete()
-     * 
-     * If no SQL errors are produced, this method will return the number of rows affected by the DELETE statement.
+     * @param string $table
+     * @param array $info
+     * @return array
      *
-     * Method #1
-     * $this->db->delete("mytable", "Age < 30");
-     *
-     * Method #2 w/Prepared Statement
-     * $lname = "Doe";
-     * $bind = array(
-     *      ":lname" => $lname
-     * )
-     * $this->db->delete("mytable", "LName = :lname", $bind);
+     *  Automated table binding for MySql or SQLite.
      */
-    public function delete($table, $where, $bind = "")
-    {
-        $sql = "DELETE FROM " . $table . " WHERE " . $where . ";";
-        $this->run($sql, $bind);
-    }
-
-
-    /**
-     * filter()
-     * 
-     * Automated table binding for MySql or SQLite.
-     */
-    private function filter($table, $info)
+    private function filter(string $table, array $info): array
     {
         $driver = $this->getAttribute(PDO::ATTR_DRIVER_NAME);
-        if ($driver == 'sqlite') {
-            $sql = "PRAGMA table_info('" . $table . "');";
-            $key = "name";
-        } elseif ($driver == 'mysqli') { // > php7
-            $sql = "DESCRIBE " . $table . ";";
-            $key = "Field";
-        } elseif ($driver == 'mysql') { // < php7
-            $sql = "DESCRIBE " . $table . ";";
-            $key = "Field";
-        } else {
-            $sql = "SELECT column_name FROM information_schema.columns WHERE table_name = '" . $table . "';";
-            $key = "column_name";
-        }
-        if (false !== ($list = $this->run($sql))) {
-            foreach ($list as $record) {
-                $fields[] = $record[$key];
-            }
+        $key = '';
+        $sql = '';
 
+        switch ($driver) {
+            case 'sqlite':
+                $sql = "PRAGMA table_info('$table');";
+                $key = 'name';
+                break;
+            case 'mysql':
+            case 'mysqli':
+                $sql = "DESCRIBE $table;";
+                $key = 'Field';
+                break;
+            default:
+                $sql = "SELECT column_name FROM information_schema.columns WHERE table_name = '$table';";
+                $key = 'column_name';
+                break;
+        }
+
+        $list = $this->run($sql);
+        if ($list !== false) {
+            $fields = array_column($list, $key);
             return array_values(array_intersect($fields, array_keys($info)));
         }
 
-        return array();
+        return [];
     }
+
 
     /**
-     * cleanup()
-     * 
-     * Ensure we have an array to work with.
+     * @param mixed $bind
+     * @return array
+     *
+     *  Ensure we have an array to work with.
      */
-    private function cleanup($bind)
+    private function cleanup(mixed $bind): array
     {
-        if (!is_array($bind)) {
-            if (!empty($bind))
-                $bind = array($bind);
-            else
-                $bind = array();
+        if (is_array($bind)) {
+            return $bind;
         }
 
-        return $bind;
+        return !empty($bind) ? [$bind] : [];
     }
+
 
     /**
      * setErrorCallbackFunction()
@@ -338,76 +368,99 @@ class Model extends PDO {
      * @param $errorCallbackFunction
      * @param string $errorMsgFormat
      */
-    public function setErrorCallbackFunction($errorCallbackFunction, $errorMsgFormat = "html")
+    public function setErrorCallbackFunction(callable|string $errorCallbackFunction, string $errorMsgFormat = "html"): void
     {
-        if (in_array(strtolower($errorCallbackFunction), array("echo", "print"))) {
+        $errorCallbackFunction = strtolower($errorCallbackFunction);
+
+        if (in_array($errorCallbackFunction, ["echo", "print"])) {
             $errorCallbackFunction = "print_r";
         }
 
-        if (method_exists($this, $errorCallbackFunction)) {
+        if (is_callable($errorCallbackFunction) || method_exists($this, $errorCallbackFunction)) {
             $this->errorCallbackFunction = $errorCallbackFunction;
-            if (!in_array(strtolower($errorMsgFormat), array("html", "text"))) {
-                $errorMsgFormat = "html";
-            }
-            $this->errorMsgFormat = $errorMsgFormat;
+
+            $this->errorMsgFormat = in_array(strtolower($errorMsgFormat), ["html", "text"]) ? strtolower($errorMsgFormat) : "html";
         }
     }
 
 
     /**
-     * debug()
-     * 
-     * A better PDO debugger, just because.
+     * @return void
+     *
+     *  A better PDO debugger, just because.
      */
-    private function debug()
+    private function debug(): void
     {
         // If no other error handler is defined, then use this.
-        if (!empty($this->errorCallbackFunction)) {
-
-            $error = array("Error" => $this->error);
-            if (!empty($this->sql)) {
-                $error["SQL Statement"] = $this->sql;
-            }
-                
-            if (!empty($this->bind)) {
-                $error["Bind Parameters"] = trim(print_r($this->bind, true));
-            }
-
-            $backtrace = debug_backtrace();
-            if (!empty($backtrace)) {
-                foreach ($backtrace as $info) {
-                    if ($info["file"] != __FILE__) {
-                        $error["Backtrace"] = $info["file"] . " at line " . $info["line"];
-                    }
-                }
-            }
-
-            $msg = "";
-            if ($this->errorMsgFormat == "html") {
-                if (!empty($error["Bind Parameters"])) {
-                    $error["Bind Parameters"] = "<pre>" . $error["Bind Parameters"] . "</pre>";
-                }
-                $css = trim(file_get_contents(dirname(__FILE__) . $this->errorCssPath)); // set this path
-                $msg .= '<style type="text/css">' . "\n" . $css . "\n</style>";
-                $msg .= "\n" . '<div class="db-error">' . "\n\t<h3>SQL Error</h3>";
-                foreach ($error as $key => $val) {
-                    $msg .= "\n\t<label>" . $key . ":</label>" . $val;
-                }
-                $msg .= "\n\t</div>\n</div>";
-            } elseif ($this->errorMsgFormat == "text") {
-                $msg .= "SQL Error\n" . str_repeat("-", 50);
-                foreach ($error as $key => $val) {
-                    $msg .= "\n\n$key:\n$val";
-                } 
-            }
-
-            $func = $this->errorCallbackFunction;
-            $this->{$func}($msg); // neat little trick to call a variable function.
+        if (empty($this->errorCallbackFunction)) {
+            return;
         }
+
+        $error = [
+            "Error" => $this->error,
+            "SQL Statement" => $this->sql ?? null,
+            "Bind Parameters" => !empty($this->bind) ? trim(print_r($this->bind, true)) : null,
+        ];
+
+        // Capture the first relevant backtrace entry
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        foreach ($backtrace as $info) {
+            if ($info["file"] !== __FILE__) {
+                $error["Backtrace"] = sprintf('%s at line %d', $info["file"], $info["line"]);
+                break;
+            }
+        }
+
+        // Prepare the error message
+        $msg = $this->prepareErrorMessage($error);
+
+        // Call the error callback function
+        $callback = $this->errorCallbackFunction;
+        $this->{$callback}($msg);
     }
 
     /**
-     * Simple Callback Function.
+     * @param array $error
+     * @return string
+     */
+    private function prepareErrorMessage(array $error): string
+    {
+        $msg = "";
+
+        if ($this->errorMsgFormat === "html") {
+            $error["Bind Parameters"] = !empty($error["Bind Parameters"]) ? "<pre>{$error["Bind Parameters"]}</pre>" : null;
+
+            $cssPath = dirname(__FILE__) . $this->errorCssPath;
+            if (file_exists($cssPath)) {
+                $css = trim(file_get_contents($cssPath));
+                $msg .= "<style type=\"text/css\">\n$css\n</style>";
+            }
+
+            $msg .= '<div class="db-error"><h3>SQL Error</h3>';
+            foreach ($error as $key => $val) {
+                if ($val !== null) {
+                    $msg .= "<label>$key:</label> $val";
+                }
+            }
+            $msg .= '</div>';
+        } elseif ($this->errorMsgFormat === "text") {
+            $msg .= "SQL Error\n" . str_repeat("-", 50);
+            foreach ($error as $key => $val) {
+                if ($val !== null) {
+                    $msg .= "\n\n$key:\n$val";
+                }
+            }
+        }
+
+        return $msg;
+    }
+
+
+    /**
+     * @param $msg
+     * @return void
+     *
+     * Example Callback Function.
      */
     public function basicCallbackFunction($msg) {
         print_r($msg);

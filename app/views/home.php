@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="english">
 <head>
     <meta charset="uft-8">
     <meta name="author" content="Richard Soares">

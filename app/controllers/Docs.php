@@ -7,7 +7,7 @@ class Docs extends Controller
         $this->load_helper(['view']);
     }
 
-    public function index($param1 = '', $param2 = '')
+    public function index(string $param1 = '', string $param2 = ''): void
     {
         $this->view('docs/index');
     }
@@ -17,7 +17,7 @@ class Docs extends Controller
         echo phpinfo();
     }
 
-    public function session()
+    public function session(): void
     {
         $session = $this->model('Session');
 
@@ -26,14 +26,13 @@ class Docs extends Controller
         $_SESSION['title'] = 'Sales Manager';
 
         echo "<pre>";
-        echo "GET ALL SESSION DATA:";
-        echo "\r\n\r\n ";
+        echo "GET ALL SESSION DATA:" . PHP_EOL;
         $data = $session->getSessionData();
         print_r($data);
 
     }
 
-    public function language()
+    public function language(): void
     {
         $this->view('docs/language');
     }
