@@ -33,6 +33,7 @@
     <li><a href="/docs#controllers">Controllers</a></li>
     <li><a href="/docs#sessions">Session Management</a></li>
     <li><a href="/docs#routing">URL Routes</a></li>
+    <li><a href="/docs#logs">Message Logs</a></li>
     <li><a href="/docs/language">Custom Languages</a></li>
 </ul>
 

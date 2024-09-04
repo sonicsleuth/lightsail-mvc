@@ -535,7 +535,7 @@ Array
 </ul>
 
 
-
+<a id="logs"></a>
 <h2>Message Logs</h2>
 
 <p>There is an optional use Model for logging messages from your scripts called <strong>Log</strong> located here: /app/models/Log.php</p>
