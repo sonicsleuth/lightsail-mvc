@@ -60,3 +60,6 @@ fabric.properties
 
 # Ignore the Composer /vendor directory
 /vendor
+
+# Ignore local Log directory
+/logs

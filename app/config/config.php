@@ -87,4 +87,3 @@ $config['default_language'] = 'en';
 * There must be a language file for each language specified in $config['available_languages']
 */
 $config['available_languages'] = ['en', 'fr', 'sp'];
-

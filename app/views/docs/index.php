@@ -536,9 +536,49 @@ Array
 
 
 
+<h2>Message Logs</h2>
 
+<p>There is an optional use Model for logging messages from your scripts called <strong>Log</strong> located here: /app/models/Log.php</p>
+<p>The Log Model will store your message in a database table called <strong>logs</strong>.
+    That table should be created in your database using the following SQL statement:</p>
 
+<pre><code class="language-text">
+CREATE TABLE logs
+(
+    event_type     varchar(45)                        NULL,
+    event_message  varchar(255)                       NULL,
+    event_script   varchar(255)                       NULL,
+    event_datetime datetime DEFAULT CURRENT_TIMESTAMP NULL
+);
+</code></pre>
 
+<p>If you set ENVIRONMENT = 'localhost' in your local <strong>.env</strong> file, your messages will also be written locally into a directory here: <strong>/app/logs/</strong></p>
+<p>These locally written log messages come in handy when working on your local computer and not require access to the logs table in your database.</p>
+
+<h3>How to implement Message Logging</h3>
+
+<p>You send a message to the Log using teh following format within your PHP scripts where you want a message to be recorded.</p>
+
+<pre><code class="language-text">
+$this->log->addRecord($event_type, $event_script, $event_message);
+</code></pre>
+
+<p>The values you must pass into the Model function <strong>addRecord()</strong> are:</p>
+
+<ul>
+    <li><strong>$event_type</strong> - this can be any custom classification, like error, success, warning, etc.</li>
+    <li><strong>$event_script</strong> - this is the name of the script (file) that sent the message.</li>
+    <li><strong>$event_message</strong> - The message. A good format to use is -> ClassName::MethodName::message</li>
+</ul>
+
+<p>If you prefer to record messages only on your local filesystem while developing, you can call the
+    following Model function. However, this function is called by default when using addRecord().</p>
+
+<pre><code class="language-text">
+$this->log->writeMessageToLocalLogFile($event_type, $event_script, $event_message);
+</code></pre>
+
+<p>The values you pass into this function are the same as those for the addRecord().</p>
 
 <h2>Language Dictionaries</h2>
 

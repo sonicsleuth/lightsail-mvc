@@ -4,7 +4,7 @@ class User extends Model
 {
     public string $fname;
     public string $lname;
-    private $db;
+    private Model $db;
 
     public function __construct()
     {
