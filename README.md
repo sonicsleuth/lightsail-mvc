@@ -113,7 +113,7 @@ You can add your custom routes to the routes configuration file located here: /a
 
 A typical wildcard route might look something like this:
 
-```
+```php
 $route['product/:num'] = 'catalog/product_lookup/$1';
 ```
 
@@ -127,7 +127,7 @@ If you prefer you can use regular expressions to define your routing rules. Any 
 
 A typical RegEx route might look something like this:
 
-```
+```php
 $route['products/([a-z]+)/(\d+)'] = '$1/id_$2';
 ```
 
@@ -140,19 +140,19 @@ Route rules are not filters! Setting a rule of e.g. ‘foo/bar/(:num)’ will no
 
 **EXAMPLES:**
 
-```
+```php
 $route['journals'] = 'blogs';
 ```
 
 A URL containing the word “journals” in the first segment will be remapped to the “blogs” controller class.
 
-```
+```php
 $route['product/(:any)'] = 'catalog/product_lookup/$1';
 ```
 
 A URL with “product” as the first segment, and anything in the second will be remapped to the “catalog” controller class and the “product_lookup” method.
 
-```
+```php
 $route['product/(:num)'] = 'catalog/product_lookup_by_id/$1';
 ```
 
@@ -162,7 +162,7 @@ A URL with “product” as the first segment, and a number in the second will b
 
 Models that you create must be stored in the /app/models/ directory and MUST use a CamelCase.php file naming format. The Class name MUST also be named identically as the file name like so:
 
-```
+```php
 class CameCase extends Model
 { .. }
 ```
@@ -172,7 +172,7 @@ The base Model serves as an abstract to PDO and can be extended by any custom Mo
 The Base Model located here **/app/core/Model.php** can be extended by your custom models like so:
 Models
 
-```
+```php
 class User extends Model
 {
     private $db;
@@ -239,7 +239,7 @@ Employee: Sue
 
 selectOne() - Use this method to return a single record. For example:
 
-```
+```php
 // Use selectOne() to return a single record.
 $user = $user->selectOne('users','id = 100');
 $print_r($user);
@@ -258,7 +258,7 @@ Views are the presentation part of the MVC pattern and as such they define desig
 
 Sometimes you may have reusable parts of your page such as a header and footer. The View Helper loads by default and allows you to "extend" your View. In this example, we are adding the common header and footer View fragments by specifying their location in the sub-directory called "common" within the Views directory, located here: /app/views/common/
 
-```
+```php
 extend_view(['common/header'], $data)
 ... the main body of your html page ...
 extend_view(['common/footer'], $data)
@@ -266,13 +266,13 @@ extend_view(['common/footer'], $data)
 
 The second optional parameter \$data is used to pass an array collection of data to this view fragment.
 
-```
+```php
 load_style(['reset','main'])
 ```
 
 The load_style() function will load a list of CSS style files located in your public directory here: /app/public/css/ \*You do not need to specify the file extension ".css"
 
-```
+```php
 load_script(['main','other']);
 ```
 
@@ -283,7 +283,7 @@ The load_script() function will load a list of Javascript files located in your 
 *You do not need to specify the file extension of the view but the View MUST be a PHP file.
 *You can create any directory organizational structure under the /app/views/ directory so long that you specify the path when loading a View from the Controller or extending it within the View, for example:
 
-```
+```php
 extend_view(['reports/daily/common/header'], $data)
 extend_view(['reports/weekly/common/header'], $data)
 ```
@@ -300,7 +300,7 @@ Our URL could have this form, where we are requiring the "User" Controller class
 
 Our Controller might look like the following:
 
-```
+```php
 class User extends Controller {
 
     public function __construct()
@@ -354,7 +354,7 @@ Within your View file you could access these values in one of two ways:
 As the key-name of the \$data array,
 or as a magically-generated PHP variable.
 
-```
+```php
 echo $data['name'] // outputs "Bob Smith"
 echo $name // also outputs "Bob Smith"
 ```
@@ -372,7 +372,7 @@ However, you may also use custom routing to hide a sub-directory. See the **Rout
 
 Using global variables and constants within your application is done by requiring the **/helper/global.php** file within your Controller, as shown below, then adding your Constants, Variables, Array, Etc to this helper file. See the contents of **/helper/global.php** for examples of use.
 
-```
+```php
 class MyController extends Controller
 {
     public function __construct()
@@ -391,7 +391,7 @@ Setting up your database:
 - Apply your database configurations here /app/config/database.php
 - Create the following MySQL table in your database.
 
-```
+```sql
 CREATE TABLE sessions (
         session_id CHAR(32) NOT NULL,
         session_data TEXT NOT NULL,
@@ -405,7 +405,7 @@ The Session Model will initially check if a Session Cookie exists, and if so, th
 The following example is available by visiting here: /docs/session
 Note: You must first set up your database, see below.
 
-```
+```php
 class Docs extends Controller()
 {
     public function session()
@@ -456,7 +456,7 @@ Solution: Add a fav.ico file into the Public root directory.
 
 You can specify the default Language and Available Languages in the **/app/config/config.php** file:
 
-```
+```php
 $config['default_language'] = 'en';
 $config['available_languages'] = ['en', 'fr', 'sp'];
 ```
@@ -467,7 +467,7 @@ For each language setting in **\$config['available_languages']**, you must creat
 and place it in the **/app/language/** directory. When you installed this framework three
 language dictionary files already exist to get you started - English, French, Spanish.
 
-```
+```php
 /app/languages/en_lang.php
 /app/languages/fr_lang.php
 /app/languages/sp_lang.php
@@ -479,7 +479,7 @@ file contains an identical list of Native-Language array keys for each Foreign-L
 
 **/app/languages/en_lang.php**
 
-```
+```php
 define('LANG', [
     'Welcome' => 'Welcome',
     'Hello' => 'Hello',
@@ -492,9 +492,56 @@ define('LANG', [
 Within your Controller or View file include the Language Helper file.
 Then pass the URL into the **language_url()** function as shown below.
 
-```
+```php
 require_once('../app/helpers/language.php');
 language_url('/doc/language'); // Output: http://localhost/en/doc/language
 ```
+
+
+## Message Logs
+
+There is an optional use Model for logging messages from your scripts called
+Log located here: `/app/models/Log.php`
+
+The Log Model will store your message in a database table called `logs`. That table should be created in your database
+using the following SQL statement:
+
+```sql
+CREATE TABLE logs
+(
+    event_type     varchar(45)                        NULL,
+    event_message  varchar(255)                       NULL,
+    event_script   varchar(255)                       NULL,
+    event_datetime datetime DEFAULT CURRENT_TIMESTAMP NULL
+);
+```
+
+If you set `ENVIRONMENT = 'localhost'` in your local `.env` file, your messages will also be written locally into a
+directory here: `/app/logs/`
+
+These locally written log messages come in handy when working on your local computer and not require access to the logs
+table in your database.
+
+### How to implement Message Logging
+You send a message to the Log using teh following format within your PHP scripts where you want a message to be recorded.
+
+```php
+$this->log->addRecord($event_type, $event_script, $event_message);
+```
+The values you must pass into the Model function `addRecord()` are:
+
+- `$event_type` - this can be any custom classification, like error, success, warning, etc.
+- `$event_script` - this is the name of the script (file) that sent the message.
+- `$event_message` - The message. A good format to use is -> ClassName::MethodName::message
+
+If you prefer to record messages only on your local filesystem while developing, you can call the following Model function.
+However, this function is called by default when using `addRecord()`.
+
+```php
+$this->log->writeMessageToLocalLogFile($event_type, $event_script, $event_message);
+```
+
+The values you pass into this function are the same as those for the `addRecord()`.
+
 
 (end of documentation)
