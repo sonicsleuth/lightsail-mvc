@@ -19,7 +19,7 @@ if(!empty($data) && $data['status']) {
 }
 ?>
 
-<p><a href="/">Go Home</a></p>
+<p><a href="/docs">Go Back</a></p>
 
 <h2>Setting up the database</h2>
 

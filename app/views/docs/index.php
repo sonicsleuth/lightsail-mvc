@@ -42,6 +42,8 @@
     <li>A general understanding of Object-Oriented Programming using PHP</li>
     <li>The included Docker Container will build a LAMP Stack for PHP. </li>
 </ul>
+<br>
+<p>If you develop a new Core Class (see: /app/core) you must initialize it here: <strong>/app/init.php</strong></p>
 
 <a id="start"></a>
 <h2>Getting Started</h2>
@@ -596,6 +598,11 @@ print_r($logs);
 <h2>Language Dictionaries</h2>
 
 <p>Information about creating a Multi-Language application <a href="/docs/language">can be found here.</a></p>
+
+
+<h2>Using Redis</h2>
+
+<p>Information about implementing the built-in <strong>Redis</strong> (<a href="https://redis.io">https://redis.io</a>) abstraction <a href="/docs/redis">can be found here.</a></p>
 
 
 <?php extend_view(['common/footer'], $data) ?>
