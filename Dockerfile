@@ -66,7 +66,9 @@ RUN chmod +x /usr/local/bin/install-php-extensions \
     && install-php-extensions pdo_mysql \
     && install-php-extensions tidy \
     && install-php-extensions zip \
-    && install-php-extensions imap
+    && install-php-extensions imap \
+    && install-php-extensions redis
+
 
 # =================================================================
 # Create an image containing PHP extension configurations

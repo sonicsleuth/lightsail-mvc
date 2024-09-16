@@ -1,8 +1,7 @@
 <?php 
 /** 
- * Access to globals require loading this helper file into
- * a Controller within the __construct() like so:
- * $this->load_helper(['global_constants']);
+ * Access to this helper requires loading it into a Controller within the __construct() like so:
+ * $this->load_helper(['globals']);
  */
 
 // Global Constantce for this Application.

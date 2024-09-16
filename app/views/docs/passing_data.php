@@ -16,8 +16,7 @@
 <p><a href="/docs">Go Back</a></p>
 
 <p><strong>NOTE:</strong> You may see the PHP Error "DB Connection Error:" at the top of this page if you have not yet
-        configured your Database settings in the <strong>/app/config/database.php</strong> settings file.
-        Configuring the database is not required to read this page.</p>
+        run the Database Setup Migration. Go here for details: <a href="http://localhost/setup">http://localhost/setup</a></p>
 
 <h2>Passing values from a Controller to a View</h2>
 
@@ -41,7 +40,7 @@ print_r($data);
 ?>
 </code></pre>
 
-<h2>Accessing $data values as PHP $variables:</h2>
+<h2>Accessing $data values as PHP variables:</h2>
 
 <p>Passing in the associative array $data to a View results in the 
 auto-magically created PHP variables for each Key in the $data array.
@@ -52,18 +51,24 @@ auto-magically created PHP variables for each Key in the $data array.
 // Looping over the list of $users passed into this View, if they exist.
 if($users != '') {
     foreach($users as $user) {
-        echo "Name: " . $user['name'] . "\r\n";
-        print_r($user);
+        echo "Id: " . $user['id'] . PHP_EOL;
+        echo "Username: " . $user['username'] . PHP_EOL;
+        echo "Password: " . $user['password'] . PHP_EOL;
+        echo "Role: " . $user['role'] . PHP_EOL;
+        echo "--------------" . PHP_EOL;
     }
 }
 </code></pre>
 
 <pre><code class="language-text">OUTPUT:
 <?php
-if($users != '') {
+if(!empty($users)) {
     foreach($users as $user) {
-        echo "Name: " . $user['name'] . "\r\n";
-        print_r($user);
+        echo "Id: " . $user['id'] . PHP_EOL;
+        echo "Username: " . $user['username'] . PHP_EOL;
+        echo "Password: " . $user['password'] . PHP_EOL;
+        echo "Role: " . $user['role'] . PHP_EOL;
+        echo "--------------" . PHP_EOL;
     }
 }
 ?>

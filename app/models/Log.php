@@ -26,6 +26,15 @@ class Log extends Model
     }
 
     /**
+     * @return array|bool
+     * Get all log records.
+     */
+    public function getLogs(): array|bool
+    {
+        return $this->db->select("logs");
+    }
+
+    /**
      * @param string $event_type
      * @param string $event_script
      * @param string $event_message
@@ -79,7 +88,7 @@ class Log extends Model
         $event_message = trim($event_message);
 
         // Check if the environment is development
-        if (strtolower(LOG_ENV ?? '') === 'localhost') {
+        if (strtolower($_ENV['ENVIRONMENT'] ?? '') === 'localhost') {
 
             // Define log directory and check for existence
             $log_directory = '/srv/app/logs/';

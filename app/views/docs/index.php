@@ -4,7 +4,7 @@
     <meta charset="uft-8">
     <meta name="author" content="Richard Soares">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightsail MVC for PHP</title>
+    <title>Lightsail MVC for PHP :: Documentation</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Montserrat:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
@@ -49,14 +49,23 @@
 The root of this installation contains the following files for spinning up a local Docker Container on your computer.
     While this is not a requirement, you can deploy this Docker Container on any compatible web hosting environment.
 </p>
+If you have Docker installed, then you can...
 <ul>
-    <li>A "Dockerfile" for running a Docker Container with Ubuntu/Apache/PHP-8.2
+    <li>
         <ul>
-            <li>Run "<strong>docker-compose up</strong>" from the directory containing <strong>root/docker-compose.yml</strong> file.
-            <li>Open a browser and go to: <strong>http://localhost</strong>
+            <li>Run "<strong>docker compose up</strong>" in your Terminal from the directory containing <strong>app/docker-compose.yml</strong> file.
+            <li>Open a web browser and go to: <a href="http://localhost"><strong>http://localhost</strong></a>
             <li>You do not have to stop/start the Docker container while editing code. Code updates are reloaded in realtime.
         </ul>
 </ul>
+
+<a id="setup"></a>
+<h2>Setting up the database</h2>
+Lightsail can set up the tables and data into the MySQL database required for this documentation.
+<ul>
+    <li>Open a web browser and got to: <a href="http://localhost/setup"><strong>http://localhost/setup</strong></a></li>
+</ul>
+
 
 <a id="features"></a>
 <h2>Features of this MVC Framework</h2>
@@ -408,7 +417,7 @@ class User extends Controller {
         ];
 
         // Load the View. 
-        // The second atribute $data is optional and only required 
+        // The second attribute $data is optional and only required
         // when passing data into a View.
         $this->view('reports/user_profile', $data);
     }
@@ -416,7 +425,7 @@ class User extends Controller {
 </code></pre>
 <br>
 <p>
-    Let's assume the we received back the following data when accessing http://my-domain.com/user/report
+    Let's assume that we received back the following data when accessing http://my-domain.com/user/report
 </p>
 <pre><code class="language-text">['name' => 'Bob Smith', 'age' => '24', 'email' => 'bobsmith@example.com']</code></pre>
 <br>
@@ -500,8 +509,7 @@ class Docs extends Controller()
 
         // For debugging needs, use the getSessionData() function.
         echo "GET ALL SESSION DATA:";
-        $data = $session->getSessionData();
-        print_r($data);
+        print_r($_SESSION);
 
     }
 }
@@ -511,17 +519,9 @@ class Docs extends Controller()
 
 <pre><code class="language-text">
 GET ALL SESSION DATA:
-
-Array
-(
-    [0] => Array
-        (
-            [session_id] => 262d5637c3e56a577a6ca3aab4df5466
-            [session_data] => fname|s:6:"Walter";lname|s:5:"Smith";title|s:13:"Sales Manager";
-            [session_lastaccesstime] => 2018-08-13 20:47:23
-        )
-
-)
+<?php
+print_r($_SESSION);
+?>
 </code></pre>
 
 <br>
@@ -552,6 +552,7 @@ CREATE TABLE logs
 );
 </code></pre>
 
+<h3>Local Log Files</h3>
 <p>If you set ENVIRONMENT = 'localhost' in your local <strong>.env</strong> file, your messages will also be written locally into a directory here: <strong>/app/logs/</strong></p>
 <p>These locally written log messages come in handy when working on your local computer and not require access to the logs table in your database.</p>
 
@@ -571,7 +572,8 @@ $this->log->addRecord($event_type, $event_script, $event_message);
     <li><strong>$event_message</strong> - The message. A good format to use is -> ClassName::MethodName::message</li>
 </ul>
 
-<p>If you prefer to record messages only on your local filesystem while developing, you can call the
+<br>
+<p>If you prefer to record messages logs on your local filesystem while developing, you can call the
     following Model function. However, this function is called by default when using addRecord().</p>
 
 <pre><code class="language-text">
@@ -579,6 +581,17 @@ $this->log->writeMessageToLocalLogFile($event_type, $event_script, $event_messag
 </code></pre>
 
 <p>The values you pass into this function are the same as those for the addRecord().</p>
+
+<h3>For example</h3>
+<p>The following output is a dump of all Log records from the MySQL database called "Logs".
+    This data was loaded into the database for this demo when you performed teh database Migration step.</p>
+
+<pre><code class="language-text">
+<?php
+print_r($logs);
+?>
+</code></pre>
+
 
 <h2>Language Dictionaries</h2>
 

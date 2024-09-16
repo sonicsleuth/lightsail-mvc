@@ -2,6 +2,7 @@
 
 class Docs extends Controller
 {
+
     public function __construct()
     {
         $this->load_helper(['view']);
@@ -9,7 +10,15 @@ class Docs extends Controller
 
     public function index(string $param1 = '', string $param2 = ''): void
     {
-        $this->view('docs/index');
+        $logsModel = $this->model('Log');
+        $sessionsModel = $this->model('Session');
+
+        $data = [
+            "logs" => $logsModel->getLogs(),
+            "sessions" => $sessionsModel->getSessionData(),
+        ];
+
+        $this->view('docs/index', $data);
     }
 
     public function phpinfo()
@@ -19,7 +28,7 @@ class Docs extends Controller
 
     public function session(): void
     {
-        $session = $this->model('Session');
+        $this->model('Session');
 
         $_SESSION['fname'] = 'Walter';
         $_SESSION['lname'] = 'Smith';
@@ -27,8 +36,7 @@ class Docs extends Controller
 
         echo "<pre>";
         echo "GET ALL SESSION DATA:" . PHP_EOL;
-        $data = $session->getSessionData();
-        print_r($data);
+        print_r($_SESSION);
 
     }
 

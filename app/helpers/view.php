@@ -1,7 +1,7 @@
 <?php
 /*
- * Helpers, as the name suggests, help you with tasks.
- * Each helper file is simply a collection of functions in a particular category.
+ * Access to this helper requires loading it into a Controller within the __construct() like so:
+ * $this->load_helper(['view']);
  */
 
 /**

@@ -19,6 +19,8 @@ class Session extends Model
 {
     private $db;
 
+    private $session_id;
+
     public function __construct()
     {
         parent::__construct();
@@ -26,7 +28,7 @@ class Session extends Model
         // Instantiate new Database object
         $this->db = new Model();
 
-        // Set handler to overide SESSION
+        // Set handler to override SESSION
 		session_set_save_handler(
             array($this, "open"),
             array($this, "close"),

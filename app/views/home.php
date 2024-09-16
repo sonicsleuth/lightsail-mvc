@@ -27,10 +27,12 @@
 <ul>
     <li><a href="/docs#requirements">Requirements</a></li>
     <li><a href="/docs#start">Getting Started</a></li>
+    <li><a href="/docs#setup">Setting up the Database</a></li>
     <li><a href="/docs#features">Features</a></li>
     <li><a href="/docs#models">Models</a></li>
-    <li><a href="/docs#views">Views</a></li>
     <li><a href="/docs#controllers">Controllers</a></li>
+    <li><a href="/docs#views">Views</a></li>
+    <li><a href="/examples/passing_data">Passing Values from Controllers to Views</a></li>
     <li><a href="/docs#sessions">Session Management</a></li>
     <li><a href="/docs#routing">URL Routes</a></li>
     <li><a href="/docs#logs">Message Logs</a></li>

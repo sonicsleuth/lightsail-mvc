@@ -16,7 +16,7 @@
  * -------------------------------------------------------------------
  */
 define('DB_DRIVER', 'mysql'); // mysql, mysqli, sqlite are options for use with the Base Model.
-define('DB_HOSTNAME', '');
-define('DB_DATABASE', '');
-define('DB_USERNAME', '');
-define('DB_PASSWORD', '');
+define('DB_HOSTNAME', $_ENV['DB_HOST']);
+define('DB_DATABASE', $_ENV['DB_DATABASE']);
+define('DB_USERNAME', $_ENV['DB_USERNAME']);
+define('DB_PASSWORD', $_ENV['DB_PASSWORD']);
