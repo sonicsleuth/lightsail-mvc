@@ -20,13 +20,3 @@ define('DB_HOSTNAME', $_ENV['DB_HOST']);
 define('DB_DATABASE', $_ENV['DB_DATABASE']);
 define('DB_USERNAME', $_ENV['DB_USERNAME']);
 define('DB_PASSWORD', $_ENV['DB_PASSWORD']);
-
-
-
-/*
- * -------------------------------------------------------------------
- * REDIS CONNECTIVITY SETTINGS
- * -------------------------------------------------------------------
- */
-define('REDIS_HOST', $_ENV['REDIS_HOST']);
-define('REDIS_PORT', $_ENV['REDIS_PORT']);

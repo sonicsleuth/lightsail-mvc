@@ -2,7 +2,6 @@
 
 class Docs extends Controller
 {
-
     public function __construct()
     {
         $this->load_helper(['view']);
@@ -75,6 +74,46 @@ class Docs extends Controller
         ];
 
         $this->view('docs/redis', $data);
+    }
+
+    public function aws_s3(): void
+    {
+        $this->view('docs/aws_s3');
+    }
+
+    public function aws_s3_example(): void
+    {
+        $this->model('AWSS3Model');
+        $s3Manager = new AWSS3Model();
+
+        echo "<pre>" . PHP_EOL;
+
+        // Upload File
+        // We are uploading the Lightsail logo from the Public image directory.
+        $s3Manager->uploadFile('light-sail-logo.png', '../public/img/light-sail-logo.png');
+        echo "File uploaded from: app/public/img/light-sail-logo.png" . PHP_EOL . PHP_EOL;
+
+        // List Files
+        $files = $s3Manager->listFiles();
+        echo "List of Files:" . PHP_EOL;
+        print_r($files);
+        echo PHP_EOL;
+
+        // Get Timestamp of file
+        $timestamp = $s3Manager->getFileTimestamp('light-sail-logo.png');
+        echo "Timestamp on the file light-sail-logo.png: " . PHP_EOL;
+        echo $timestamp . PHP_EOL . PHP_EOL;
+
+        // Get Timestamp of file
+        $filesize = $s3Manager->getFileSize('light-sail-logo.png');
+        echo "File Size of light-sail-logo.png: " . PHP_EOL;
+        echo $filesize . PHP_EOL . PHP_EOL;
+
+        // Download File
+        $s3Manager->downloadFile('light-sail-logo.png', '../public/img/light-sail-logo-2.png');
+        echo "File downloaded to: app/public/img/light-sail-logo-2.png " . PHP_EOL;
+        echo "Check that directory to see the downloaded file!" . PHP_EOL;
+
     }
 
 }

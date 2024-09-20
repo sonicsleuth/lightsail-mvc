@@ -599,10 +599,15 @@ print_r($logs);
 
 <p>Information about creating a Multi-Language application <a href="/docs/language">can be found here.</a></p>
 
-
+<a id="redis"></a>
 <h2>Using Redis</h2>
 
-<p>Information about implementing the built-in <strong>Redis</strong> (<a href="https://redis.io">https://redis.io</a>) abstraction <a href="/docs/redis">can be found here.</a></p>
+<p>Information about implementing the built-in <strong>Redis Model</strong> (<a href="https://redis.io">https://redis.io</a>) <a href="/docs/redis">can be found here.</a></p>
+
+<a id="s3"></a>
+<h2>Using AWS S3 Object Storage Service</h2>
+
+<p>Information about implementing the built-in <strong>AWS S3 Object Storage Service Model</strong> <a href="/docs/aws_s3">can be found here.</a></p>
 
 
 <?php extend_view(['common/footer'], $data) ?>

@@ -21,6 +21,13 @@ services:
       REDIS_PORT: 6379
       SESSION_DRIVER: redis
       CACHE_DRIVER: redis
+
+      # AWS S3 settings
+      AWS_BUCKET_NAME: your_aws_s3_bucket_name
+      AWS_REGION: your_aws_s3_bucket_region
+      AWS_VERSION: latest
+      AWS_ACCESS_KEY: your_aws_access_key
+      AWS_SECRET_KEY: your_aws_secret_key
   mysql:
     image: mysql:8.0
     container_name: lightsail-mysql-container

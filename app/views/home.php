@@ -37,6 +37,8 @@
     <li><a href="/docs#routing">URL Routes</a></li>
     <li><a href="/docs#logs">Message Logs</a></li>
     <li><a href="/docs/language">Custom Languages</a></li>
+    <li><a href="/docs/redis">Using Redis</a></li>
+    <li><a href="/docs/aws_s3">Using AWS S3 Storage Service</a></li>
 </ul>
 
 <h3>PHP Information:</h3>

@@ -100,9 +100,12 @@ define('LANGUAGE_PATH', $language_path);
 // Build front-loader
 require_once '../app/config/config.php';
 require_once '../app/config/database.php';
+require_once '../app/config/redis.php';
+require_once '../app/config/aws.php';
 require_once '../app/config/routes.php';
 require_once '../app/init.php';
 
 $app = new App($config, $route);
+
 
 
