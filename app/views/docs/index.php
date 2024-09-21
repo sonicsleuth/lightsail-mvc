@@ -594,14 +594,16 @@ print_r($logs);
 ?>
 </code></pre>
 
+<a id="API Interfaces"></a>
+<h2>API Interfaces</h2>
+<p>Information about creating a API Interface <a href="/docs/api">can be found here.</a></p>
 
+<a id="language"></a>
 <h2>Language Dictionaries</h2>
-
 <p>Information about creating a Multi-Language application <a href="/docs/language">can be found here.</a></p>
 
 <a id="redis"></a>
 <h2>Using Redis</h2>
-
 <p>Information about implementing the built-in <strong>Redis Model</strong> (<a href="https://redis.io">https://redis.io</a>) <a href="/docs/redis">can be found here.</a></p>
 
 <a id="s3"></a>

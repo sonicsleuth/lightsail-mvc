@@ -113,7 +113,11 @@ class Docs extends Controller
         $s3Manager->downloadFile('light-sail-logo.png', '../public/img/light-sail-logo-2.png');
         echo "File downloaded to: app/public/img/light-sail-logo-2.png " . PHP_EOL;
         echo "Check that directory to see the downloaded file!" . PHP_EOL;
+    }
 
+    public function api(): void
+    {
+        $this->view('docs/api');
     }
 
 }

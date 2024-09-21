@@ -36,7 +36,8 @@
     <li><a href="/docs#sessions">Session Management</a></li>
     <li><a href="/docs#routing">URL Routes</a></li>
     <li><a href="/docs#logs">Message Logs</a></li>
-    <li><a href="/docs/language">Custom Languages</a></li>
+    <li><a href="/docs/language">Language Dictionaries</a></li>
+    <li><a href="/docs/api">API Interfaces</a></li>
     <li><a href="/docs/redis">Using Redis</a></li>
     <li><a href="/docs/aws_s3">Using AWS S3 Storage Service</a></li>
 </ul>
