@@ -2,6 +2,7 @@
 /*
  * -------------------------------------------------------------------
  * DATABASE CONNECTIVITY SETTINGS
+ * Enable this config file by adding it to: public/index.php // Build front-loader
  * -------------------------------------------------------------------
  * This file will contain the settings needed to access your database.
  *

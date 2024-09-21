@@ -13,6 +13,8 @@ services:
       - mysql
       - redis
     environment:
+      # If you add new values below you need to restart the container, run: docker compose up -d
+
       DB_HOST: mysql
       DB_DATABASE: lightsail
       DB_USERNAME: username
@@ -28,6 +30,9 @@ services:
       AWS_VERSION: latest
       AWS_ACCESS_KEY: your_aws_access_key
       AWS_SECRET_KEY: your_aws_secret_key
+
+      # API Tokens (for the template in Docs)
+      API_TOKEN_TEMPLATE: 2aa788b32cd40c8ee0948d10f065
   mysql:
     image: mysql:8.0
     container_name: lightsail-mysql-container

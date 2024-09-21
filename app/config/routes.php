@@ -1,6 +1,8 @@
 <?php
 /*
  * URL Routing
+ * Enable this config file by adding it to: public/index.php // Build front-loader
+ *
  * Typically there is a one-to-one relationship between a URL string and its corresponding controller class/method.
  * The segments in a URI normally follow this pattern:
  * example.com/class/function/id/

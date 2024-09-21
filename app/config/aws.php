@@ -2,6 +2,7 @@
 /*
 * -------------------------------------------------------------------
 * AWS S3 Storage Service Settings
+* Enable this config file by adding it to: public/index.php // Build front-loader
 * -------------------------------------------------------------------
 */
 define('AWS_BUCKET_NAME', $_ENV['AWS_BUCKET_NAME']);

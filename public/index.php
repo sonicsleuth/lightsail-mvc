@@ -102,6 +102,7 @@ require_once '../app/config/config.php';
 require_once '../app/config/database.php';
 require_once '../app/config/redis.php';
 require_once '../app/config/aws.php';
+require_once '../app/config/api.php';
 require_once '../app/config/routes.php';
 require_once '../app/init.php';
 

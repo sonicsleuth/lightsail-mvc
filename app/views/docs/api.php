@@ -52,7 +52,7 @@ class ApiTemplate extends Controller
     // DO NOT STORE REAL TOKENS HERE... as I have done here for this template example.
     // Insert them as secret environment values. eg: from a ".env" file.
     // We can store more than one in this array as you might want to have a token for each protocol.
-    private $validAuthTokens = ['2aa788b32cd40c8ee0948d10f065'];
+    private $validAuthTokens = [API_TOKEN_TEMPLATE];
 
     public function __construct()
     {

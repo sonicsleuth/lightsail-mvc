@@ -2,6 +2,7 @@
 /*
 * --------------------------------------------------------------------------
 * Base Site URL - SSL HTTPS Management
+* Enable this config file by adding it to: public/index.php // Build front-loader
 * --------------------------------------------------------------------------
 * URL to your MVC root. Typically, this will be your base URL,
 * WITH a trailing slash:
