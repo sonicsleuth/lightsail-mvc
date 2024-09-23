@@ -120,4 +120,50 @@ class Docs extends Controller
         $this->view('docs/api');
     }
 
+    public function geocoder(): void
+    {
+        /*
+         * GET MULTIPLE ADDRESSES
+         */
+
+        $multiple_address_input = array(
+            array(
+                'id' => '111',
+                'street' => '1600 Amphitheatre Parkway',
+                'city' => 'Mountain View',
+                'state' => 'CA',
+                'zip' => '94043',
+            ),
+            array(
+                'id' => '222',
+                'street' => '1600 Pennsylvania Avenue',
+                'city' => 'Washington',
+                'state' => 'DC',
+                'zip' => '20500',
+            ),
+            // Add more addresses as needed
+        );
+
+        $Geocoder = $this->model('Geocoder');
+
+        $multiple_address_output = $Geocoder->geocodeMultipleAddresses('temp_csv_filename', $multiple_address_input, 'destination.csv');
+
+        /*
+         * GET SINGLE ADDRESS
+         */
+
+        $single_address_input = "4600 Silver Hill Rd, Washington, DC 20233";
+
+        $single_address_output = $Geocoder->geocodeSingleAddress($single_address_input);
+
+        $data = [
+            'multiple_address_input' => $multiple_address_input,
+            'multiple_address_output' => $multiple_address_output,
+            'single_address_input' => $single_address_input,
+            'single_address_output' => $single_address_output,
+            ];
+
+        $this->view('docs/geocoder', $data);
+    }
+
 }

@@ -608,8 +608,12 @@ print_r($logs);
 
 <a id="s3"></a>
 <h2>Using AWS S3 Object Storage Service</h2>
-
 <p>Information about implementing the built-in <strong>AWS S3 Object Storage Service Model</strong> <a href="/docs/aws_s3">can be found here.</a></p>
+
+
+<a id="s3"></a>
+<h2>Geolocation and Address Verification</h2>
+<p>Information about implementing the built-in <strong>US Census GeoCoder API</strong> <a href="/docs/geocoder">can be found here.</a></p>
 
 
 <?php extend_view(['common/footer'], $data) ?>

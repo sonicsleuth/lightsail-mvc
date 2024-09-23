@@ -40,6 +40,7 @@
     <li><a href="/docs/api">API Interfaces</a></li>
     <li><a href="/docs/redis">Using Redis</a></li>
     <li><a href="/docs/aws_s3">Using AWS S3 Storage Service</a></li>
+    <li><a href="/docs/geocoder">US Census GeoCoder API</a></li>
 </ul>
 
 <h3>PHP Information:</h3>
