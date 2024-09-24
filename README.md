@@ -11,6 +11,14 @@
 - Database configuration - see /app/config/database.php
 - General Configuration - see /app/config/\*
 
+## Updates v3.01
+ - Setup/Migration - Part of documentation, a tool to setup MySQL and Redis for Docs.
+ - Redis - Extendable Core Model - a wrapper for working with key:value pairs in Redis.
+ - AWS S3 - Extendable Core Model - provides an interface for managing objects on AWS S3.
+ - Geocoder - Model - a wrapper for the US CENSUS Geocoder API. Verify Address and GeoLocation.
+ - Debugger - Helper - a helper utility for debugging your code.
+ - Documentation for the above new features.
+
 ## Documentation
 
 ## Preface
