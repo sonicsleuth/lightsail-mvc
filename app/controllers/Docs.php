@@ -41,7 +41,7 @@ class Docs extends Controller
 
     public function redis(): void
     {
-        $redis = new RedisModel();
+        $redis = new RedisModel(); // Directly accessible when installed as a core service here: app/init.php
 
         // Store some simple values:
         $redis->set('name', 'John Doe');
@@ -54,7 +54,7 @@ class Docs extends Controller
         // Create a sample JSON object (as an associative array in PHP)
         $data = [
             "name" => "John Doe",
-            "email" => "john@example.com",
+            "email" => "john.doe@example.com",
             "age" => 30,
             "location" => "New York"
         ];

@@ -34,7 +34,7 @@
 
 <pre><code class="language-php">
 // Create an instance of the Redis abstraction
-$redis = $this->model('Redis');
+$redis = $this->model('RedisModel');
 
 // Set a value in Redis
 $redis->set('name', 'John Doe');

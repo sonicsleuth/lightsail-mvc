@@ -5,7 +5,7 @@
  *
  * HOW TO USE:
  * // Create an instance of the Redis abstraction
- * $redis = new RedisAbstraction();
+ * $redis = new Redis();
  *
  * // Set a value in Redis
  * $redis->set('name', 'John Doe');
