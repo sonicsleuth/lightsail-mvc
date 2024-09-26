@@ -34,7 +34,7 @@
 
 <pre><code class="language-php">
 // Create an instance of the Redis abstraction
-$redis = $this->model('RedisModel');
+$redis = new RedisModel(); // Directly accessible when installed as a core service here: app/init.php
 
 // Set a value in Redis
 $redis->set('name', 'John Doe');
@@ -69,7 +69,7 @@ echo "Value for DATE = ". $data['date'] . PHP_EOL;
 
 <pre><code class="language-php">
 // Create an instance of the Redis abstraction
-$redis = $this->model('Redis');
+$redis = new RedisModel(); // Directly accessible when installed as a core service here: app/init.php
 
 // Create a sample JSON object (as an associative array in PHP)
 $data = [

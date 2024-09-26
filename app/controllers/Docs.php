@@ -83,8 +83,7 @@ class Docs extends Controller
 
     public function aws_s3_example(): void
     {
-        $this->model('AWSS3Model');
-        $s3Manager = new AWSS3Model();
+        $s3Manager = new AWS_S3_Model();
 
         echo "<pre>" . PHP_EOL;
 
@@ -122,6 +121,8 @@ class Docs extends Controller
 
     public function geocoder(): void
     {
+        $Geocoder = new Geocoder(); // Directly accessible when installed as a core service here: app/init.php
+
         /*
          * GET MULTIPLE ADDRESSES
          */
@@ -144,8 +145,6 @@ class Docs extends Controller
             // Add more addresses as needed
         );
 
-        $Geocoder = $this->model('Geocoder');
-
         $multiple_address_output = $Geocoder->geocodeMultipleAddresses('temp_csv_filename', $multiple_address_input, 'destination.csv');
 
         /*
@@ -164,6 +163,66 @@ class Docs extends Controller
             ];
 
         $this->view('docs/geocoder', $data);
+    }
+
+    public function rabbitmq(): void
+    {
+        // Used for output on document page.
+        $messages_received= '';
+
+        // PRODUCE - Send Message to RabbitMQ
+        try {
+            // Open Connection
+            $rabbit = new RabbitMQ(RABBITMQ_HOST, RABBITMQ_PORT, RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS);
+
+            // Publish a message with the routing key 'user.created'
+            $rmq_message = json_encode(['user_id' => 123, 'name' => 'John Doe']);
+            $rabbit->publish('user.created', $rmq_message);
+
+            // Append status to the documentation message output.
+            $messages_received .= "Produced: " . $rmq_message . PHP_EOL;
+
+            // Close the connection after consuming
+            $rabbit->close();
+
+        } catch (Exception $e) {
+            // Handle exception
+            echo 'Error: ' . $e->getMessage();
+        }
+
+        // Consume - Get Messages from RabbitMQ
+        try {
+            // Open Connection
+            $rabbit = new RabbitMQ(RABBITMQ_HOST, RABBITMQ_PORT, RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS);
+
+            // This callback function will process your messages, if any are received.
+            $callback = function ($msg) use (&$messages_received) {
+
+                // TODO: You can process the message here
+                // for this example we are just appending to the documentation message output.
+                $messages_received .= 'Received: ' . $msg->body . PHP_EOL;
+                $messages_received .= "Delivery tag: " . $msg->delivery_info['delivery_tag'] . PHP_EOL;
+
+                // Acknowledge the message
+                $msg->ack();
+            };
+
+            // Consume messages from the 'user_queue' bound to the 'user.*' routing key
+           $rabbit->consume('user_queue', ['user.created'], $callback);
+
+            // Close the connection after consuming
+            $rabbit->close();
+
+        } catch (Exception $e) {
+            // Handle exception
+            echo 'Error: ' . $e->getMessage();
+        }
+
+        $data = [
+            'messages_received' => $messages_received
+        ];
+
+        $this->view('docs/rabbitmq', $data);
     }
 
 }

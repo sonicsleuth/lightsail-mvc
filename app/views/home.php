@@ -38,9 +38,10 @@
     <li><a href="/docs#logs">Message Logs</a></li>
     <li><a href="/docs/language">Language Dictionaries</a></li>
     <li><a href="/docs/api">API Interfaces</a></li>
-    <li><a href="/docs/redis">Using Redis</a></li>
+    <li><a href="/docs/redis">Using Redis, the in-memory cache</a></li>
+    <li><a href="/docs/rabbitmq">Using RabbitMQ, the message broker</a></li>
     <li><a href="/docs/aws_s3">Using AWS S3 Storage Service</a></li>
-    <li><a href="/docs/geocoder">US Census GeoCoder API</a></li>
+    <li><a href="/docs/geocoder">Using GeoCoder, the US CENSUS API</a></li>
 </ul>
 
 <h3>PHP Information:</h3>

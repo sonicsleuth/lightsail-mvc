@@ -42,8 +42,8 @@ AWS_SECRET_KEY: your_secret_key
 
         public function __construct()
         {
-            $this->model('AWSS3Model');
-            $s3Manager = new AWSS3Model();
+            // Directly accessible when installed as a core service here: app/init.php
+            $s3Manager = new AWS_S3_Model();
         }
     }
 </code></pre><br>
@@ -82,10 +82,20 @@ within your AWS S3 account, then you can click the following link to test the AW
 
 <p><a href="/docs/aws_s3_example" target="_blank">Try the AWS S3 Model</a></p>
 
-<p>If you receive any PHP errors after clicking the above link, check your configurations.
-    Otherwise, you should see output like the following which confirms everything is working correctly.</p>
+<p>If you receive any PHP errors after clicking the above link, update the settings in your <strong>docker-compose.yml</strong> file<br>
+    Then restart your containers, run: <strong>docker-compose up -d</strong></p>
+
+<pre><code class="language-yml"># AWS S3 settings
+AWS_BUCKET_NAME: your_aws_s3_bucket_name
+AWS_REGION: your_aws_s3_bucket_region
+AWS_VERSION: latest
+AWS_ACCESS_KEY: your_aws_access_key
+AWS_SECRET_KEY: your_aws_secret_key
+</code></pre><br>
+
 
 <p><strong>IF SUCCESS:</strong></p>
+<p>You should see output like the following which confirms everything is working correctly.</p>
 <pre><code class="language-text">File uploaded from: app/public/img/light-sail-logo.png
 
 List of Files:

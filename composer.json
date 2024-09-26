@@ -6,7 +6,8 @@
     "ext-json": "*",
     "ext-curl": "*",
     "predis/predis": "^2.2",
-    "aws/aws-sdk-php": "^3.322"
+    "aws/aws-sdk-php": "^3.322",
+    "php-amqplib/php-amqplib": "^3.7"
   },
   "config": {
     "platform": {

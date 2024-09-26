@@ -38,6 +38,9 @@ RUN apt-get install -y --no-install-recommends \
     vim \
     && rm -rf /var/lib/apt/lists/*
 
+# Install the sockets extension
+RUN docker-php-ext-install sockets
+
 # =================================================================
 # Create an image containing PHP configurations
 FROM dependencies AS configure-php

@@ -1,3 +1,12 @@
+# WARNING: Environmental values should always be kept a secret.
+# Environmental values below should NOT go into production. Use a .env file or secret store.
+# Environmental values loaded below by these containers are for instructional purpose only.
+
+# TIP: If you add/change environment values below you will need to restart the container...
+# run: docker compose up -d
+
+# BUILD VERSION: 3.5
+
 services:
   php:
     build:
@@ -12,13 +21,16 @@ services:
     links:
       - mysql
       - redis
+      - rabbitmq
     environment:
-      # If you add new values below you need to restart the container, run: docker compose up -d
 
+      # MySQL settings
       DB_HOST: mysql
       DB_DATABASE: lightsail
       DB_USERNAME: username
       DB_PASSWORD: password
+
+      # Redis Settigns
       REDIS_HOST: redis
       REDIS_PORT: 6379
       SESSION_DRIVER: redis
@@ -31,8 +43,15 @@ services:
       AWS_ACCESS_KEY: your_aws_access_key
       AWS_SECRET_KEY: your_aws_secret_key
 
+      # RabbitMQ settings
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
       # API Tokens (for the template in Docs)
       API_TOKEN_TEMPLATE: 2aa788b32cd40c8ee0948d10f065
+
   mysql:
     image: mysql:8.0
     container_name: lightsail-mysql-container
@@ -45,8 +64,21 @@ services:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_ROOT_HOST: '%'
       MYSQL_TCP_POST: 3306
+
   redis:
     image: redis:4.0-alpine
     container_name: lightsail-redis-container
     ports:
       - 6379:6379
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: lightsail-rabbitmq-container
+    ports:
+      - 5672:5672 # AMQP protocol port (for TCP connections)
+      - 15672:15672 # RabbitMQ Management UI (HTTP port)
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    # You can access the RabbitMQ Management web portal here:  http://localhost:15672
+    # and use the credentials (guest/guest) as set above.

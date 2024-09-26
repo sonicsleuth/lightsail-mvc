@@ -45,7 +45,7 @@ require_once '../vendor/autoload.php';
 use Aws\S3\S3Client;
 use Aws\Exception\AwsException;
 
-class AWSS3Model
+class AWS_S3_Model
 {
     private $s3Client;
     private $bucketName;

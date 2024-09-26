@@ -603,8 +603,13 @@ print_r($logs);
 <p>Information about creating a Multi-Language application <a href="/docs/language">can be found here.</a></p>
 
 <a id="redis"></a>
-<h2>Using Redis</h2>
-<p>Information about implementing the built-in <strong>Redis Model</strong> (<a href="https://redis.io">https://redis.io</a>) <a href="/docs/redis">can be found here.</a></p>
+<h2>Using Redis, the in-memory cache</h2>
+<p>Information about implementing the <strong>Redis Model</strong> (<a href="https://redis.io">https://redis.io</a>) <a href="/docs/redis">can be found here.</a></p>
+
+
+<a id="rabbitmq"></a>
+<h2>Using RabbitMQ, the message broker</h2>
+<p>Information about implementing the <strong>RabbitMQ Model</strong> (<a href="https://www.rabbitmq.com">https://www.rabbitmq.com</a>) <a href="/docs/rabbitmq">can be found here.</a></p>
 
 <a id="s3"></a>
 <h2>Using AWS S3 Object Storage Service</h2>
