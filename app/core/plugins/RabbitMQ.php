@@ -109,13 +109,6 @@ class RabbitMQ
                 echo 'Error during consumption: ' . $e->getMessage();
             }
         }
-
-        // TODO TEST
-//        try {
-//            $this->channel->consume();
-//        } catch (\Throwable $exception) {
-//            echo $exception->getMessage();
-//        }
     }
 
     /**

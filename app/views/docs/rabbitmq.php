@@ -63,7 +63,7 @@ $rabbit->close();
 <h3>Example Output</h3>
 <p>The following output was Produced and Consumed using the above examples as this page was generated.</p>
 
-<pre><code class="language-text"><?php print_r($messages_received); ?></code></pre><br>
+<pre><code class="language-text"><?php print_r($status_messages); ?></code></pre><br>
 
 <h3>How It Works:</h3>
 <ul>

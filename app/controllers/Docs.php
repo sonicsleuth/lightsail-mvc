@@ -168,7 +168,7 @@ class Docs extends Controller
     public function rabbitmq(): void
     {
         // Used for output on document page.
-        $messages_received= '';
+        $status_messages= '';
 
         // PRODUCE - Send Message to RabbitMQ
         try {
@@ -180,7 +180,7 @@ class Docs extends Controller
             $rabbit->publish('user.created', $rmq_message);
 
             // Append status to the documentation message output.
-            $messages_received .= "Produced: " . $rmq_message . PHP_EOL;
+            $status_messages .= "Produced: " . $rmq_message . PHP_EOL;
 
             // Close the connection after consuming
             $rabbit->close();
@@ -196,12 +196,12 @@ class Docs extends Controller
             $rabbit = new RabbitMQ(RABBITMQ_HOST, RABBITMQ_PORT, RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS);
 
             // This callback function will process your messages, if any are received.
-            $callback = function ($msg) use (&$messages_received) {
+            $callback = function ($msg) use (&$status_messages) {
 
                 // TODO: You can process the message here
                 // for this example we are just appending to the documentation message output.
-                $messages_received .= 'Received: ' . $msg->body . PHP_EOL;
-                $messages_received .= "Delivery tag: " . $msg->delivery_info['delivery_tag'] . PHP_EOL;
+                $status_messages .= 'Received: ' . $msg->body . PHP_EOL;
+                $status_messages .= "Delivery tag: " . $msg->delivery_info['delivery_tag'] . PHP_EOL;
 
                 // Acknowledge the message
                 $msg->ack();
@@ -219,7 +219,7 @@ class Docs extends Controller
         }
 
         $data = [
-            'messages_received' => $messages_received
+            'status_messages' => $status_messages
         ];
 
         $this->view('docs/rabbitmq', $data);
