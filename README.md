@@ -11,10 +11,11 @@
 - Database configuration - see /app/config/database.php
 - General Configuration - see /app/config/\*
 
-## Updates v3.01
+## Updates v3.02
  - Setup/Migration - Part of documentation, a tool to setup MySQL and Redis for Docs.
- - Redis - Extendable Core Model - a wrapper for working with key:value pairs in Redis.
- - AWS S3 - Extendable Core Model - provides an interface for managing objects on AWS S3.
+ - Redis - Model Plugin - an in-memory data store interface and server using Radis.
+ - RabbitMQ - Model Plugin - a message broker interface and sample server using RabbitMQ.
+ - AWS S3 - Model Plugin - provides an interface for managing objects on AWS S3.
  - Geocoder - Model - a wrapper for the US CENSUS Geocoder API. Verify Address and GeoLocation.
  - Debugger - Helper - a helper utility for debugging your code.
  - Documentation for the above new features.
