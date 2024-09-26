@@ -12,8 +12,8 @@
 - General Configuration - see /app/config/\*
 
 ## Updates v3.02
- - Setup/Migration - Part of documentation, a tool to setup MySQL and Redis for Docs.
- - Redis - Model Plugin - an in-memory data store interface and server using Radis.
+ - Setup/Migration - MySQL DB setup for examples in the documentation.
+ - Redis - Model Plugin - an in-memory data store interface and server using Redis.
  - RabbitMQ - Model Plugin - a message broker interface and sample server using RabbitMQ.
  - AWS S3 - Model Plugin - provides an interface for managing objects on AWS S3.
  - Geocoder - Model - a wrapper for the US CENSUS Geocoder API. Verify Address and GeoLocation.
