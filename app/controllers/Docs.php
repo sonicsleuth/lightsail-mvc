@@ -167,7 +167,7 @@ class Docs extends Controller
 
     public function rabbitmq(): void
     {
-        // Used for output on document page.
+        // A status message displayed on document page.
         $status_messages= '';
 
         // PRODUCE - Send Message to RabbitMQ
@@ -179,16 +179,19 @@ class Docs extends Controller
             $rmq_message = json_encode(['user_id' => 123, 'name' => 'John Doe']);
             $rabbit->publish('user.created', $rmq_message);
 
+            // Close the connection
+            $rabbit->close();
+
             // Append status to the documentation message output.
             $status_messages .= "Produced: " . $rmq_message . PHP_EOL;
-
-            // Close the connection after consuming
-            $rabbit->close();
 
         } catch (Exception $e) {
             // Handle exception
             echo 'Error: ' . $e->getMessage();
         }
+
+        // Set delay between Producing and Consuming. Give RabbitMQ time to prepare the queue.
+        sleep(5);
 
         // Consume - Get Messages from RabbitMQ
         try {
@@ -199,18 +202,20 @@ class Docs extends Controller
             $callback = function ($msg) use (&$status_messages) {
 
                 // TODO: You can process the message here
-                // for this example we are just appending to the documentation message output.
-                $status_messages .= 'Received: ' . $msg->body . PHP_EOL;
-                $status_messages .= "Delivery tag: " . $msg->delivery_info['delivery_tag'] . PHP_EOL;
+                // $msg->body, for this example, returns a json object with user info.
 
                 // Acknowledge the message
                 $msg->ack();
+
+                // Append status to the documentation message output.
+                $status_messages .= 'Consumed: ' . $msg->body . PHP_EOL;
+                $status_messages .= "Delivery tag: " . $msg->delivery_info['delivery_tag'] . PHP_EOL;
             };
 
-            // Consume messages from the 'user_queue' bound to the 'user.*' routing key
-           $rabbit->consume('user_queue', ['user.created'], $callback);
+            // Consume messages from the 'user_queue' associated to the 'user.created' routing-key
+           $rabbit->consume('user_queue', ['user.created'], $callback, $status_messages);
 
-            // Close the connection after consuming
+            // Close the connection
             $rabbit->close();
 
         } catch (Exception $e) {
@@ -218,6 +223,7 @@ class Docs extends Controller
             echo 'Error: ' . $e->getMessage();
         }
 
+        // Prepare the View (web page)
         $data = [
             'status_messages' => $status_messages
         ];

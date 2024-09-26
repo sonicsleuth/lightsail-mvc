@@ -69,7 +69,7 @@ class RabbitMQ
     }
 
     /**
-     * Publish a message to the RabbitMQ server
+     * Publish a SINGLE message to the RabbitMQ server.
      *
      * @param string $routing_key The routing key for the message
      * @param string $message_body The payload to be delivered
@@ -81,13 +81,13 @@ class RabbitMQ
     }
 
     /**
-     * Consume messages from the RabbitMQ server
+     * Consume a SINGLE messages from the RabbitMQ server. First-In First-Out from the queue.
      *
      * @param string $queue The queue to consume from
      * @param array $binding_keys Array of routing keys to bind to
      * @param callable $callback The function to call when a message is consumed
      */
-    public function consume(string $queue, array $binding_keys, callable $callback): void
+    public function consume(string $queue, array $binding_keys, callable $callback, string &$status_messages): void
     {
         // Declare the queue
         $this->channel->queue_declare($queue, false, true, false, false);
@@ -98,15 +98,27 @@ class RabbitMQ
         }
 
         // Consume messages from the queue
-        $this->channel->basic_consume($queue, '', false, false, false, false, $callback);
+        $this->channel->basic_consume($queue, '', false, false, false, false, function($msg) use ($callback, $status_messages) {
+            // Process the message
+            $callback($msg);
 
+            // Stop if there are no more callbacks
+            if ($this->channel->callbacks) {
+                $this->channel->basic_cancel($msg->delivery_info['consumer_tag']);
+            }
+        });
+
+        // If the queue is empty, hang up the connection. If any errors, inform the consumer callback.
         while ($this->channel->is_consuming()) {
             try {
-                // Wait 5 seconds for incoming messages before stopping.
-                $this->channel->wait(null,false, 5);
+                // Timeout of 5 seconds, Add timeout to avoid connection from hanging.
+                $this->channel->wait(null, false, 5);
+            } catch (PhpAmqpLib\Exception\AMQPTimeoutException $e) {
+                $status_messages .= "[INFO] No messages received within the timeout period, stopping consumer...\n";
+                break;
             } catch (Exception $e) {
-                // Handle any exceptions that occur during message processing
-                echo 'Error during consumption: ' . $e->getMessage();
+                $status_messages .= 'Error during consumption: ' . $e->getMessage();
+                break;
             }
         }
     }

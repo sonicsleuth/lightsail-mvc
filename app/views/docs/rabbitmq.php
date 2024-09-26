@@ -21,49 +21,22 @@
 <p>This will require the php-amqplib library, so make sure to install it using Composer if you haven't already:</p>
 
 <pre><code class="language-php">composer require php-amqplib/php-amqplib
-</code></pre><br>
+</code></pre><br/>
 
 <h3>RabbitMQ Management</h3>
 
 <p>Once RabbitMQ is up and running, you can access the Management Console here: <a href="http://localhost:15672">http://localhost:15672</a>
-<br>Login using:
-    <br>Username: <strong><?php echo RABBITMQ_DEFAULT_USER; ?></strong>
-    <br>Password: <strong><?php echo RABBITMQ_DEFAULT_PASS; ?></strong></p>
+<br/>Login using:
+    <br/>Username: <strong><?php echo RABBITMQ_DEFAULT_USER; ?></strong>
+    <br/>Password: <strong><?php echo RABBITMQ_DEFAULT_PASS; ?></strong></p>
 
-<h3>Producer Example</h3>
-You can use this example to publish messages to RabbitMQ using topic routing. Here’s an example of how to send a message:
+<h3>About this document</h3>
+<p>This is a LIVE document. We sent then retrieved a message from RabbitMQ just now.
 
-<pre><code class="language-php">$rabbit = new RabbitMQ(RABBITMQ_HOST, RABBITMQ_PORT, RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS);
+<p>You just sent a JSON message to RabbitMQ, then Consumed a message from RabbitMQ.
+    It happens to be the same message but it could have been some other message from another Producer.</p>
 
-// Publish a message with the routing key 'user.created'
-$rabbit->publish('user.created', json_encode(['user_id' => 123, 'name' => 'John Doe']));
-
-// Close the connection
-$rabbit->close();
-</code></pre><br>
-
-<h3>Consumer Example</h3>
-You can also consume messages from specific routing keys:
-
-<pre><code class="language-php">$rabbit = new RabbitMQ(RABBITMQ_HOST, RABBITMQ_PORT, RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS);
-
-// Define the callback to handle the consumed message
-$callback = function($msg) {
-    echo 'Received: ' . $msg->body . "\n";
-    // You can decode and process the message here
-};
-
-// Consume messages from the 'user_queue' bound to the 'user.*' routing key
-$rabbit->consume('user_queue', ['user.*'], $callback);
-
-// Close the connection after consuming
-$rabbit->close();
-</code></pre><br>
-
-<h3>Example Output</h3>
-<p>The following output was Produced and Consumed using the above examples as this page was generated.</p>
-
-<pre><code class="language-text"><?php print_r($status_messages); ?></code></pre><br>
+<pre><code class="language-text"><?php print_r($status_messages); ?></code></pre><br/>
 
 <h3>How It Works:</h3>
 <ul>
@@ -82,10 +55,52 @@ $rabbit->close();
     <li>The queue is declared as durable, meaning that it will survive server restarts.</li>
 </ul>
 
+
+<h3>Producer</h3>
+You are a <strong>Producer</strong> when sending a message to RabbitMQ.
+<ul>
+    <li>Open a connection to RabbitMQ</li>
+    <li>Publish your message using a routing-key</li>
+    <li>Close the connection</li>
+</ul>
+
+<pre><code class="language-php">$rabbit = new RabbitMQ(RABBITMQ_HOST, RABBITMQ_PORT, RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS);
+
+// Publish a message with the routing key 'user.created'
+$rabbit->publish('user.created', json_encode(['user_id' => 123, 'name' => 'John Doe']));
+
+// Close the connection
+$rabbit->close();
+</code></pre><br/>
+
+<h3>Consumer</h3>
+You are a <strong>Consumer</strong> when getting a message from RabbitMQ.
+<ul>
+    <li>Open a connection to RabbitMQ</li>
+    <li>Check for a message within a queue grouped by a routing-key</li>
+    <li>If message received, process it with the callback function.</li>
+    <li>Close the connection</li>
+</ul>
+
+<pre><code class="language-php">$rabbit = new RabbitMQ(RABBITMQ_HOST, RABBITMQ_PORT, RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS);
+
+// Define the callback to handle the consumed message
+$callback = function($msg) {
+    echo 'Received: ' . $msg->body . "\n";
+    // You can decode and process the message here
+};
+
+// Consume messages from the 'user_queue' bound to the 'user.*' routing key
+$rabbit->consume('user_queue', ['user.*'], $callback);
+
+// Close the connection after consuming
+$rabbit->close();
+</code></pre><br/>
+
 <h3>Troubleshooting</h3>
 
 <p>If it seems to take an unusually long time for a response from RabbitMQ, check the logs:</p>
-<pre><code class="language-text">run: docker logs lightsail-rabbitmq-container</code></pre><br>
+<pre><code class="language-text">run: docker logs lightsail-rabbitmq-container</code></pre><br/>
 
 
 <?php extend_view(['common/footer'], $data) ?>
