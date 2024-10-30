@@ -59,6 +59,7 @@ class Model extends PDO {
                 $sqlType = strtolower(strtok($this->sql, ' '));
 
                 switch ($sqlType) {
+                    case 'with':
                     case 'select':
                     case 'describe':
                     case 'pragma':
