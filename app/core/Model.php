@@ -127,8 +127,16 @@ class Model extends PDO {
         // Execute the query and retrieve the data
         $data = $this->run($sql, $bind, $entity_decode);
 
-        // Return the data or false if empty
-        return !empty($data) ? $data : false;
+        // Ensure single records are structured as a nested array (so it matches the format of multiple records)
+        if (count((array)$data) > 0) {
+            if (!is_array(reset($data))) {
+                $people = [$data];
+            }
+        } else {
+            $data = false;
+        }
+
+        return $data;
     }
 
 
@@ -159,8 +167,16 @@ class Model extends PDO {
         // Execute the query and retrieve the data
         $data = $this->run($sql, $bind, $entity_decode);
 
-        // Return the first result or false if no data is found
-        return $data[0] ?? false;
+        // Ensure single records are structured as a nested array (so it matches the format of multiple records)
+        if (count((array)$data) > 0) {
+            if (!is_array(reset($data))) {
+                $people = [$data];
+            }
+        } else {
+            $data = false;
+        }
+
+        return $data;
     }
 
 
@@ -183,12 +199,16 @@ class Model extends PDO {
     {
         $data = $this->run($sql, $bind, $entity_decode);
 
-        if (empty($data)) {
-            return false;
+        // Ensure single records are structured as a nested array (so it matches the format of multiple records)
+        if (count((array)$data) > 0) {
+            if (!is_array(reset($data))) {
+                $people = [$data];
+            }
+        } else {
+            $data = false;
         }
 
-        // Determine if the result is a single column or multiple columns
-        return (count($data[0]) > 1) ? $data : $data[0];
+        return $data;
     }
 
 
