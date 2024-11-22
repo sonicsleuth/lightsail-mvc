@@ -64,10 +64,10 @@ class Model extends PDO {
                     case 'describe':
                     case 'pragma':
                         $results = $pdostmt->fetchAll(PDO::FETCH_ASSOC);
-                        if ($entity_decode) {
-                            array_walk_recursive($results, fn(&$item) => $item = htmlspecialchars_decode($item));
-                        }
-                        return $results;
+                    if ($entity_decode) {
+                        array_walk_recursive($results, fn(&$item) => $item = is_string($item) ? htmlspecialchars_decode($item) : $item);
+                    }
+                    return $results;
 
                     case 'delete':
                     case 'update':
