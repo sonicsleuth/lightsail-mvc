@@ -165,18 +165,13 @@ class Model extends PDO {
         $sql .= ";";
 
         // Execute the query and retrieve the data
-        $data = $this->run($sql, $bind, $entity_decode);
+        $record = $this->run($sql, $bind, $entity_decode);
 
-        // Ensure single records are structured as a nested array (so it matches the format of multiple records)
-        if (count((array)$data) > 0) {
-            if (!is_array(reset($data))) {
-                $people = [$data];
-            }
-        } else {
-            $data = false;
+        // Ensure we return a single array or false.
+        if (is_array($record) && !empty($record) && isset($record[0]) && is_array($record[0])) {
+            return $record[0];
         }
-
-        return $data;
+        return false;
     }
 
 
