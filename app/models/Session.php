@@ -211,7 +211,7 @@ class Session extends Model
     */
     function getSessionData()
     {
-        $data = $this->db->select('sessions');
+        $data = $this->db->selectOne('sessions');
 
         return $data;
     }
