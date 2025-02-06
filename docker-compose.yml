@@ -67,8 +67,8 @@ services:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_ROOT_HOST: '%'
       MYSQL_TCP_POST: 3306
-      command: --default-authentication-plugin=mysql_native_password --bind-address=0.0.0.0 # Allow remote access
-      volumes:
+    command: --default-authentication-plugin=mysql_native_password --bind-address=0.0.0.0 # Allow remote access
+    volumes:
         - ./data/db:/var/lib/mysql # Persistent data storage
       # NOTE: You can add remote user access into MySQL Container by running these Docker commands after the Contain is running. Replace "remote_user" with a preferred user name.
       # NOTE: docker exec -it nextpage-mysql-container mysql -u root -p -e "CREATE USER IF NOT EXISTS 'remote_user'@'localhost' IDENTIFIED BY 'user_password';"
