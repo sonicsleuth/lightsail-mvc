@@ -201,13 +201,11 @@ class Model extends PDO {
     {
         $data = $this->run($sql, $bind, $entity_decode);
 
-        // Ensure single records are structured as a nested array (so it matches the format of multiple records)
-        if (count((array)$data) > 0) {
-            if (!is_array(reset($data))) {
-                $people = [$data];
+        if ($data !== false) {
+            if (!isset($data[0]) || !is_array($data[0])) {
+                // Wrap single record inside an array
+                $data = [$data];
             }
-        } else {
-            $data = false;
         }
 
         return $data;
